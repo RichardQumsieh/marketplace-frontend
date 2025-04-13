@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import Layout from './Layout';
 import MainLayout from './MainLayout';
 
-const NO_LAYOUT_ROUTES = ['/', '/sign-in', '/signup', '/forgot-password', '/admin-auth', '/add-product', '/business'];
+const NO_LAYOUT_ROUTES = ['/', '/sign-in', '/signup', '/forgot-password', '/admin-auth', '/add-product', '/business', '/seller-profile'];
 const MAIN_LAYOUT_PREFIXES = ['/product/', '/cart', '/checkout', '/profile', '/privacy'];
 
 const LayoutWrapper = ({ children }) => {
