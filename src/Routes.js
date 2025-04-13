@@ -1,0 +1,259 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Dashboard from './Dashboard';
+import Orders from './Orders';
+import Users from './Users';
+import Signin from './Signin';
+import Signup from './Signup';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
+import { isAuthenticated } from './utils/auth';
+import LayoutWrapper from './components/LayoutWrapper';
+import ForgotPassword from './ForgotPassword';
+import AdminAuthPage from './AdminsAuth';
+import SellerProfilePage from './SellerProfile';
+import AddProduct from './AddProduct';
+import EditProduct from './EditProduct';
+import SellerSettings from './SellerSettings';
+import MarketPage from './Market';
+import ViewSellerProduct from './ViewSellerProduct';
+import ViewProduct from './ViewProduct';
+import CartPage from './CartPage';
+import BuyerProfilePage from './BuyerProfile';
+import AdminSettings from './AdminSettings';
+import DeliverySignup from './DeliverySignup';
+import { DeliveryProfile } from './DeliveryProfile';
+import { AdminDeliveryRequests } from './DeliveryPersonnel';
+import DeliveryOrders from './DeliveryOrders';
+import Checkout from './Checkout';
+import About from './About';
+import BusinessPage from './BusinessPage';
+import BrandProfile from './BrandProfile';
+import PrivacyPolicy from './PrivacyPolicy';
+
+const App = () => {
+  return (
+    <LayoutWrapper>
+      <Routes>
+        
+        <Route
+          path="/sign-in"
+          element={
+            <PublicRoute redirectTo="/">
+              <Signin />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute redirectTo="/">
+              <Signup />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute redirectTo="/">
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/admin-auth"
+          element={
+            <PublicRoute redirectTo="/">
+              <AdminAuthPage />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/business"
+          element={
+            <BusinessPage />
+          }
+        />
+
+        <Route
+          path="/delivery/signup"
+          element={
+            <PublicRoute redirectTo="/">
+              <DeliverySignup />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/delivery/profile"
+          element={
+            <ProtectedRoute allowedUserTypes={['Delivery']}>
+              <DeliveryProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/delivery/orders"
+          element={
+            <ProtectedRoute allowedUserTypes={['Delivery']}>
+              <DeliveryOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/"
+          element={
+            <MarketPage />
+          }
+        />
+
+        <Route
+          path="/about"
+          element={
+            <About />
+          }
+        />
+
+
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute allowedUserTypes={['Buyer']}>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute allowedUserTypes={['Buyer']}>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute allowedUserTypes={['Buyer']}>
+              <BuyerProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller-profile"
+          element={
+            <ProtectedRoute allowedUserTypes={['Seller']}>
+              <SellerProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile/:store_name"
+          element={
+            <BrandProfile />
+          }
+        />
+
+        <Route
+          path="/add-product"
+          element={
+              <AddProduct />
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin']}>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/delivery-personnel"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin']}>
+              <AdminDeliveryRequests />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller/product/:id"
+          element = {
+            <ViewSellerProduct />
+          }
+        />
+
+        <Route
+          path="/product/:id"
+          element = {
+            <ViewProduct />
+          }
+        />
+
+        <Route
+          path="/edit-product/:id"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
+              <EditProduct />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller-settings"
+          element={
+            <ProtectedRoute allowedUserTypes={['Seller']}>
+              <SellerSettings />
+            </ProtectedRoute>
+          }
+        />
+  
+        <Route
+          path="/admin-settings"
+          element={
+            <ProtectedRoute allowedUserTypes={['Admin']}>
+              <AdminSettings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/privacy-policy" element={ <PrivacyPolicy /> } />
+
+        <Route path="*" element={<Navigate to='/' />} />
+      </Routes>
+    </LayoutWrapper>
+  );
+};
+
+export default App;
