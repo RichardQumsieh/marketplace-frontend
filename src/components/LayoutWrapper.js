@@ -8,7 +8,7 @@ const MAIN_LAYOUT_PREFIXES = ['/product/', '/cart', '/checkout', '/profile', '/p
 const LayoutWrapper = ({ children }) => {
   const { pathname } = useLocation();
   
-  if (NO_LAYOUT_ROUTES.includes(pathname) || pathname.startsWith('/delivery')) {
+  if (NO_LAYOUT_ROUTES.includes(pathname) || pathname.startsWith('/delivery') || pathname.startsWith('/edit-product')) {
     return children;
   }
 

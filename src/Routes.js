@@ -7,16 +7,13 @@ import Signin from './Signin';
 import Signup from './Signup';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
-import { isAuthenticated } from './utils/auth';
 import LayoutWrapper from './components/LayoutWrapper';
 import ForgotPassword from './ForgotPassword';
 import AdminAuthPage from './AdminsAuth';
 import SellerProfilePage from './SellerProfile';
 import AddProduct from './AddProduct';
 import EditProduct from './EditProduct';
-import SellerSettings from './SellerSettings';
 import MarketPage from './Market';
-import ViewSellerProduct from './ViewSellerProduct';
 import ViewProduct from './ViewProduct';
 import CartPage from './CartPage';
 import BuyerProfilePage from './BuyerProfile';
@@ -208,13 +205,6 @@ const App = () => {
         />
 
         <Route
-          path="/seller/product/:id"
-          element = {
-            <ViewSellerProduct />
-          }
-        />
-
-        <Route
           path="/product/:id"
           element = {
             <ViewProduct />
@@ -226,15 +216,6 @@ const App = () => {
           element={
             <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
               <EditProduct />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/seller-settings"
-          element={
-            <ProtectedRoute allowedUserTypes={['Seller']}>
-              <SellerSettings />
             </ProtectedRoute>
           }
         />
