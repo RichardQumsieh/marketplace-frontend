@@ -11,6 +11,7 @@ import {
   ThemeProvider,
   createTheme,
   Link,
+  Rating,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import Carousel from "react-material-ui-carousel";
@@ -18,6 +19,9 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from "axios";
 import Footer from "./components/Footer";
+import FeaturedReviews from "./components/FeaturedReviews";
+import ReviewSummary from "./components/ReviewSummary";
+import ReviewForm from "./components/ReviewForm";
 
 const Image = styled("img")({
   width: "100%",
@@ -60,9 +64,17 @@ const ViewProduct = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState(null);
   const [quantityForBuyer, setQuantityForBuyer] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const fetchReviews = async () => {
+    const res = await fetch(`http://localhost:5000/api/products/${id}/reviews`);
+    const data = await res.json();
+    setReviews(data);
+    console.log(data);
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -79,6 +91,7 @@ const ViewProduct = () => {
     };
 
     fetchProduct();
+    fetchReviews();
   }, [id]);
 
   const addToCart = async (productId, quantity) => {
@@ -152,6 +165,30 @@ const ViewProduct = () => {
             <Typography variant="h6" fontWeight="bold">
               {product.name}
             </Typography>
+            <Box>
+              {product.average_rating == 0 ? (
+                <Typography variant="caption">
+                  Not yet rated - be the first one to rate it&nbsp;&nbsp;
+                </Typography>
+              ) : (
+                <>
+                  <Typography variant="caption">
+                    Rating:&nbsp;&nbsp;
+                  </Typography>
+                  <Rating
+                    value={product.average_rating}
+                    precision={0.5}
+                    size="small"
+                    readOnly
+                    sx={{ 
+                      '& .MuiRating-iconFilled': { color: '#FFD700' },
+                      '& .MuiRating-iconHover': { color: '#FFDB58' },
+                      verticalAlign: 'middle'
+                    }}
+                  />
+                </>
+              )}
+            </Box>
             <Typography variant="caption" color="text.secondary" mt={2} >
               This product is brought to you by:&nbsp;
               <Link href={`/profile/${product.store_name}`} target="_blank" rel="noopener" variant="body1" fontWeight="bold" color="info" display={'inline-block'} underline="hover">
@@ -197,6 +234,29 @@ const ViewProduct = () => {
           </Paper>
         </Grid2>
       </Grid2>
+      
+      <Box sx={{ mt: 6, borderTop: '1px solid rgba(0,0,0,0.08)', pt: 4 }}>
+        <ReviewSummary
+          averageRating={product.rating_stats.average} 
+          reviewCount={product.review_count} 
+        />
+        
+        <FeaturedReviews reviews={reviews} />
+        
+        {product.review_count > 3 && (
+          <Button 
+            component={Link}
+            to={`/products/${id}/reviews`}
+            variant="text"
+            color="warning"
+            sx={{ mt: 2 }}
+          >
+            See all reviews →
+          </Button>
+        )}
+      </Box>
+
+      <ReviewForm productId={id} onReviewSubmitted={fetchReviews}/>
     </Box>
     <Footer />
     </ThemeProvider>

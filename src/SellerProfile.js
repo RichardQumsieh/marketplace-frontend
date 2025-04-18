@@ -121,7 +121,7 @@ const SellerProfilePage = () => {
     setActiveTab(newValue);
     setDrawerOpen(false);
   };
-  
+
   useEffect(() => {
     const fetchSellerDetails = async () => {
       try {
@@ -211,14 +211,14 @@ const SellerProfilePage = () => {
   if (error) return <Alert severity="error">{error}</Alert>;
 
   const tabs = (
-    <Tabs
-      value={activeTab}
-      onChange={handleTabChange}
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
       orientation={isMobile ? 'vertical' : 'horizontal'}
       variant={isMobile ? 'fullWidth' : 'scrollable'}
       scrollButtons="auto"
-      textColor="primary"
-      indicatorColor="primary"
+          textColor="primary"
+          indicatorColor="primary"
       sx={{
         '& .MuiTab-root': {
           minHeight: 64,
@@ -368,7 +368,7 @@ const SellerProfilePage = () => {
                       <Avatar 
                         src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
                         alt="User Avatar"
-                        sx={{
+        sx={{
                           width: 32,
                           height: 32,
                           bgcolor: 'primary.main'
@@ -419,8 +419,8 @@ const SellerProfilePage = () => {
           <Container maxWidth='xl'>
             <Fade in timeout={500}>
               <Box>
-                {activeTab === 0 && <DashboardPanel seller={seller} />}
-                {activeTab === 1 && <ProductsPanel seller={seller} />}
+        {activeTab === 0 && <DashboardPanel seller={seller} />}
+        {activeTab === 1 && <ProductsPanel seller={seller} />}
                 {activeTab === 2 && <SettingsPanel seller={seller} />}
               </Box>
             </Fade>
@@ -448,7 +448,7 @@ const DashboardPanel = ({ seller }) => {
           <Grid2 item size={{ xs: 12, md: 3 }} key={index}>
             <Grow in timeout={500 + index * 100}>
               <StyledCard>
-                <CardContent>
+          <CardContent>
                   <Stack direction="row" alignItems="center" spacing={2}>
                     <Avatar sx={{ 
                       bgcolor: `${stat.color}.main`,
@@ -463,13 +463,13 @@ const DashboardPanel = ({ seller }) => {
                       </Typography>
                       <Typography variant="h5" color={`${stat.color}.main`}>
                         {stat.value}
-                      </Typography>
+            </Typography>
                     </Box>
                   </Stack>
-                </CardContent>
+          </CardContent>
               </StyledCard>
             </Grow>
-          </Grid2>
+      </Grid2>
         ))}
       </Grid2>
     </ThemeProvider>
@@ -488,7 +488,7 @@ const ProductsPanel = ({ seller }) => {
       <Box position="relative">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            Your Products
+        Your Products
           </Typography>
           <Stack direction="row" spacing={2} display={{ xs: 'none', md: 'block' }}>
             <Button
@@ -506,7 +506,7 @@ const ProductsPanel = ({ seller }) => {
             </IconButton>
             <TextField
               select
-              value={view}
+            value={view}
               onChange={(e) => setView(e.target.value)}
               size="small"
               sx={{ width: 120 }}
@@ -519,7 +519,7 @@ const ProductsPanel = ({ seller }) => {
           </Stack>
         </Stack>
 
-        {seller?.products?.length > 0 ? (
+      {seller?.products?.length > 0 ? (
           <>
             <Zoom in timeout={500}>
               <Tooltip title='Add Product' placement='right' arrow>
@@ -555,41 +555,41 @@ const ProductsPanel = ({ seller }) => {
                 <Grid2 item size={{ xs: 12, md: view }} key={product.id}>
                   <Grow in timeout={500 + index * 100}>
                     <StyledCard>
-                      {product.images[0] && (
+                {product.images[0] && (
                         <Box sx={{ p: 1, bgcolor: 'rgba(0,0,0,0.2)' }}>
-                          <CardMedia
-                            component="img"
-                            height="200"
-                            image={`data:image/jpeg;base64,${product.images[0]}`}
-                            alt={product.name}
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={`data:image/jpeg;base64,${product.images[0]}`}
+                      alt={product.name}
                             sx={{
                               objectFit: "contain",
                             }}
-                          />
+                    />
                         </Box>
-                      )}
+                )}
                       <CardContent>
                         <Stack spacing={1}>
-                          <Tooltip title={product.name} arrow>
+                  <Tooltip title={product.name} arrow>
                             <Link 
                               href={`/seller/product/${product.id}`}
                               sx={{
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 2,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                                 color: 'text.primary',
                                 textDecoration: 'none',
                                 fontWeight: 500,
                                 '&:hover': {
                                   color: 'primary.main'
                                 }
-                              }}
-                            >
-                              {product.name}
-                            </Link>
-                          </Tooltip>
+                      }}
+                    >
+                      {product.name}
+                    </Link>
+                  </Tooltip>
                           <Typography 
                             sx={{
                               fontWeight: 'bold',
@@ -617,12 +617,12 @@ const ProductsPanel = ({ seller }) => {
                             )}
                           </Stack>
                         </Stack>
-                      </CardContent>
+                </CardContent>
                     </StyledCard>
                   </Grow>
-                </Grid2>
-              ))}
             </Grid2>
+          ))}
+        </Grid2>
           </>
         ) : (
           <Grow in timeout={500}>
@@ -634,10 +634,10 @@ const ProductsPanel = ({ seller }) => {
             }}>
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No products yet!
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
+      </Typography>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
                 onClick={() => { navigate('/add-product'); }}
                 sx={{
                   mt: 2,
@@ -648,11 +648,11 @@ const ProductsPanel = ({ seller }) => {
                 }}
               >
                 Add Your First Product
-              </Button>
+      </Button>
             </Paper>
           </Grow>
         )}
-      </Box>
+    </Box>
     </ThemeProvider>
   );
 };
@@ -717,16 +717,16 @@ const SettingsPanel = ({ seller }) => {
               color: 'primary.main'
             }}
           >
-            Account Settings
-          </Typography>
-
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 2 }}>
+        Account Settings
+      </Typography>
+      
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 2 }}>
               <ProfileAvatar profilePhoto={preview}/>
               <Button variant="contained" component="label" sx={{mt:1}}>
               Change Profile Photo
               <input type="file" hidden onChange={handleFileChange} />
               </Button>
-          </Box>
+      </Box>
 
           <Box sx={{
             bgcolor: 'rgba(0, 0, 0, 0.2)',
@@ -748,7 +748,7 @@ const SettingsPanel = ({ seller }) => {
             <Typography variant="body1">
               <strong>Phone:</strong> {seller?.phone_number || 'Not provided'}
             </Typography>
-          </Box>
+    </Box>
 
           <TextField
             label="Store Description"
