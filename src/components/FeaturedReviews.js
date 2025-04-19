@@ -1,9 +1,9 @@
-import { Avatar, Box, Typography, Rating } from '@mui/material';
+import { Avatar, Box, Typography, Rating, Divider } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 
 const FeaturedReviews = ({ reviews }) => (
-  <Box sx={{ mt: 3 }}>
-    {reviews.map((review) => (
+  <Box sx={{ mt: 1 }}>
+    {reviews?.map((review) => (
       <Box 
         key={review.id} 
         sx={{ 
@@ -14,20 +14,22 @@ const FeaturedReviews = ({ reviews }) => (
           boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center'}}>
           <Avatar 
+          sizes=''
             src={`data:image/jpeg;base64,${review.profile_photo_base64}`} 
             sx={{ width: 40, height: 40, mr: 2 }}
           />
           <Box>
-            <Typography fontWeight={600}>{review.first_name} {review.last_name}</Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='subtitle2' fontWeight={600}>{review.first_name} {review.last_name}</Typography>
+            <Typography variant="caption" color="text.secondary">
               {formatDistanceToNow(review.created_at, { addSuffix: true })}
             </Typography>
           </Box>
         </Box>
-        <Rating value={review.rating} readOnly sx={{ mb: 1 }} />
-        <Typography>{review.review}</Typography>
+        <Divider sx={{ my: 1 }} />
+        <Rating size='small' value={review.rating} readOnly sx={{ mb: 1 }} />
+        <Typography variant='subtitle2'>{review.review}</Typography>
       </Box>
     ))}
   </Box>

@@ -48,7 +48,7 @@ const ViewProduct = () => {
     },
     typography: {
       fontFamily: '"Lora", serif', // Default for body
-      h3: {
+      h5: {
         fontFamily: '"Playfair Display", serif',
         fontWeight: 600,
         color: 'white'
@@ -73,7 +73,6 @@ const ViewProduct = () => {
     const res = await fetch(`http://localhost:5000/api/products/${id}/reviews`);
     const data = await res.json();
     setReviews(data);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -109,6 +108,15 @@ const ViewProduct = () => {
     }
   };
 
+  const formatDescription = (text) => {
+    if (!text) return '';
+    return text.split('\n').map((line, index) => (
+      <div key={index} style={{ marginBottom: '8px' }}>
+        • {line}
+      </div>
+    ));
+  };
+
   if (loading)
     return (
       <Box
@@ -130,10 +138,10 @@ const ViewProduct = () => {
     <Box sx={{ mx: 2, my: 2, mb: 3 }}>
       <Grid2 container spacing={3}>
         <Grid2 item size = {{ xs: 12, sm: 4 }}>
-          {product.images.length > 0 ? (
+          {product?.images.length > 0 ? (
             <>
-              <Carousel>
-                {product.images.map((image, index) => (
+              <Carousel stopAutoPlayOnHover animation="fade" swipe height={400} strictIndexing>
+                {product?.images.map((image, index) => (
                   <Image
                     key={index}
                     src={`data:image/jpeg;base64,${image.base64}`}
@@ -161,12 +169,20 @@ const ViewProduct = () => {
         </Grid2>
 
         <Grid2 item size = {{ xs: 12, sm: 8 }}>
-          <Paper sx={{ padding: "20px", borderRadius: "10px" }} elevation={3}>
+          <Paper sx={{
+            padding: "20px",
+            borderRadius: "10px", 
+            borderRadius: '16px',
+            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(30, 30, 30, 0.7)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }} elevation={3}>
             <Typography variant="h6" fontWeight="bold">
-              {product.name}
+              {product?.name}
             </Typography>
             <Box>
-              {product.average_rating == 0 ? (
+              {product?.average_rating == 0 ? (
                 <Typography variant="caption">
                   Not yet rated - be the first one to rate it&nbsp;&nbsp;
                 </Typography>
@@ -175,56 +191,51 @@ const ViewProduct = () => {
                   <Typography variant="caption">
                     Rating:&nbsp;&nbsp;
                   </Typography>
-                  <Rating
-                    value={product.average_rating}
-                    precision={0.5}
-                    size="small"
-                    readOnly
-                    sx={{ 
-                      '& .MuiRating-iconFilled': { color: '#FFD700' },
-                      '& .MuiRating-iconHover': { color: '#FFDB58' },
-                      verticalAlign: 'middle'
-                    }}
+                  <ReviewSummary
+                    averageRating={product?.rating_stats.average} 
+                    reviewCount={product?.review_count} 
                   />
                 </>
               )}
             </Box>
             <Typography variant="caption" color="text.secondary" mt={2} >
               This product is brought to you by:&nbsp;
-              <Link href={`/profile/${product.store_name}`} target="_blank" rel="noopener" variant="body1" fontWeight="bold" color="info" display={'inline-block'} underline="hover">
-                {product.store_name}
+              <Link href={`/profile/${product?.store_name}`} target="_blank" rel="noopener" variant="body1" fontWeight="bold" color="info" display={'inline-block'} underline="hover">
+                {product?.store_name}
               </Link>
             </Typography>
-            <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
+            <Typography variant="h6" color="warning" sx={{ mt: 2 }}>
               {Number(product.price / 1.3701710).toFixed(2)} JOD
             </Typography>
-            <Typography variant="body1" sx={{ mt: 2, whiteSpace: 'pre-line' }}>
-              {product.description}
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              {formatDescription(product?.description)}
             </Typography>
             <Typography variant="body2" sx={{ mt: 2, fontWeight: "bold" }}>
-              Category: {product.category || "N/A"}
+              Category: {product?.category || "N/A"}
             </Typography>
             <Typography variant="body2" sx={{ my: 1 }}>
-              In Stock: {product.quantity_in_stock}
+              In Stock: {product?.quantity_in_stock}
             </Typography>
 
             {!['Admin', 'Seller'].includes(localStorage.getItem('type')) && (
               <Grid2 container spacing={4} sx={{ mt: 2 }}>
                 <Grid2 size={6}>
                   <TextField
+                    size="small"
                     label="Quantity"
                     type="number"
                     value={quantityForBuyer}
-                    onChange={(e) => setQuantityForBuyer(Math.min(product.quantity_in_stock, Math.max(1, e.target.value)))}
-                    slotProps={{ min: 1, max: product.quantity_in_stock }}
+                    sx={{ width: '100%' }}
+                    onChange={(e) => setQuantityForBuyer(Math.min(product?.quantity_in_stock, Math.max(1, e.target.value)))}
+                    slotProps={{ min: 1, max: product?.quantity_in_stock }}
                   />
                 </Grid2>
                 <Grid2 size={6}>
                   <Button
                     variant="contained"
-                    color="success"
-                    sx={{ mt: 3, width: "100%" }}
-                    onClick={() => { addToCart(product.id, quantityForBuyer); }}
+                    color="warning"
+                    sx={{ width: "100%", fontWeight: 600 }}
+                    onClick={() => { addToCart(product?.id, quantityForBuyer); }}
                   >
                     Add to Cart
                   </Button>
@@ -235,15 +246,11 @@ const ViewProduct = () => {
         </Grid2>
       </Grid2>
       
-      <Box sx={{ mt: 6, borderTop: '1px solid rgba(0,0,0,0.08)', pt: 4 }}>
-        <ReviewSummary
-          averageRating={product.rating_stats.average} 
-          reviewCount={product.review_count} 
-        />
-        
+      <Box sx={{ mt: 2, borderTop: '1px solid rgba(255,255,255,0.08)', pt: 2 }}>
+        <Typography variant="h5">Reviews</Typography>
         <FeaturedReviews reviews={reviews} />
         
-        {product.review_count > 3 && (
+        {product?.review_count > 3 && (
           <Button 
             component={Link}
             to={`/products/${id}/reviews`}
