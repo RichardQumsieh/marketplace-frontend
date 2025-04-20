@@ -325,7 +325,7 @@ const BuyerProfile = () => {
                         value={newCard.card_number} 
                         onChange={(e) => setNewCard({ ...newCard, card_number: e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim() })} 
                         fullWidth 
-                        inputProps={{ maxLength: 19 }}
+                        slotProps={{ htmlInput: { maxLength: 19 } }}
                       />
                     </TableCell>
                     <TableCell>
