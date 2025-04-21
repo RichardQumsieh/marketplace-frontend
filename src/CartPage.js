@@ -2,22 +2,32 @@ import { useState, useEffect } from "react";
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, TextField, CardMedia, Link, createTheme, ThemeProvider } from "@mui/material";
 import { Delete as DeleteIcon, ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
 import axios from "axios";
+import Footer from "./components/Footer";
 
 const CartPage = () => {
   const theme = createTheme({
     palette: {
       mode: 'dark',
       primary: {
-        main: '#1976d2', // A more professional blue
+        main: '#90caf9',
       },
       background: {
-        default: '#121212', // Dark background
-        paper: '#1e1e1e', // Slightly lighter for cards and papers
+        default: '#121212',
+        paper: 'rgba(30, 30, 30, 0.8)',
       },
-      text: {
-        primary: '#ffffff', // White text
-        secondary: '#b3b3b3', // Light grey for secondary text
+    },
+    typography: {
+      allVariants: {
+        fontFamily: '"Lora", serif',
       },
+      h4: {
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 500,
+      },
+      h6: {
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 500,
+      }
     },
   });
 
@@ -82,7 +92,7 @@ const CartPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-    <Container sx={{ my: 3 }}>
+    <Container sx={{ my: 3, minHeight: '92vh' }}>
       <Typography sx={{ fontWeight: 'bold', color: 'text.primary' }} variant="h4" gutterBottom>
         <ShoppingCartIcon fontSize="large" sx={{ verticalAlign: 'middle' }}/> Shopping Cart
       </Typography>
@@ -143,6 +153,7 @@ const CartPage = () => {
         </>
       )}
     </Container>
+    <Footer />
     </ThemeProvider>
   );
 };
