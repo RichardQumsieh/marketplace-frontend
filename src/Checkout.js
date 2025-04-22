@@ -150,9 +150,9 @@ const Checkout = () => {
         save_payment_method: false
       } : {
         card_number: tempPaymentDetails.cardNumber,
-        expiry_date: tempPaymentDetails.expiryDate,
+        card_expiry: tempPaymentDetails.expiryDate,
         card_holder_name: tempPaymentDetails.cardHolderName,
-        save_payment_method: savePaymentMethod
+        save_payment_method: !savePaymentMethod
       };
 
       const res = await axios.post(

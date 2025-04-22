@@ -25,6 +25,7 @@ const BuyerProfile = () => {
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   useEffect(() => {
     const fetchPaymentInfo = async () => {
@@ -62,6 +63,7 @@ const BuyerProfile = () => {
         i === index ? { ...card, [e.target.name]: e.target.value } : card
       )
     );
+    setOpenEdit(true);
   };
   
   const handleFileChange = (e) => {
@@ -69,7 +71,8 @@ const BuyerProfile = () => {
     if (file) {
       setProfilePhoto(file);
       setPreview(URL.createObjectURL(file));
-    }
+    };
+    setOpenEdit(true);
   };
 
   const handleProfileUpdate = (e) => {
@@ -145,6 +148,33 @@ const BuyerProfile = () => {
       alert("Payment method has been deleted successfully!");
     } catch (err) {
       setError(`Failed to delete payment method: ${err}`);
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      // Find the card that was edited
+      const editedCard = paymentInfo.find(card => 
+        card.card_number !== newCard.card_number || 
+        card.card_expiry !== newCard.card_expiry || 
+        card.card_holder_name !== newCard.card_holder_name
+      );
+
+      if (editedCard) {
+        await axios.post("http://localhost:5000/api/buyer/payment", {
+          id: editedCard.id,
+          card_number: editedCard.card_number.replace(/\s/g, ''),
+          card_expiry: editedCard.card_expiry,
+          card_holder_name: editedCard.card_holder_name
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+        });
+
+        setOpenEdit(false);
+        alert("Card information updated successfully!");
+      }
+    } catch (err) {
+      setError(`Failed to update card information: ${err.response?.data?.message || err.message}`);
     }
   };
   
@@ -272,6 +302,27 @@ const BuyerProfile = () => {
             </Typography>
             
             {error && <Typography color="error" align="center">{error}</Typography>}
+
+            {openEdit && (
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <Button 
+                  variant="contained" 
+                  onClick={handleSaveChanges}
+                  sx={{ 
+                    backgroundColor: '#00ffff', 
+                    color: '#000',
+                    '&:hover': { 
+                      backgroundColor: '#33ffff',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 8px rgba(0, 255, 255, 0.3)'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Save Changes
+                </Button>
+              </Box>
+            )}
 
             <TableContainer component={Paper} sx={{ backgroundColor: '#121212', borderRadius: 2, border: '1px solid rgba(0, 255, 255, 0.2)' }}>
               <Table>
