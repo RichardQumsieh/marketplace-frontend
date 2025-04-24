@@ -8,6 +8,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import SearchNavbar from "./SearchPage";
 
 const categories = ["Electronics", "Clothing", "Furniture", "Books", "Other"];
 
@@ -66,6 +67,7 @@ export default function MainLayout ({ children }) {
     }, [])
 
     const theme = createTheme({
+        palette: {mode:'dark'},
         typography: {
             allVariants: {
                 fontFamily: '"Lora", serif',
@@ -117,30 +119,18 @@ export default function MainLayout ({ children }) {
                                 &nbsp;Marketplace
                             </Box>
                         </Typography>
-                        <Box sx={{ 
-                            display: "flex", 
-                            alignItems: "center", 
-                            bgcolor: "rgba(255, 255, 255, 0.08)", 
-                            borderRadius: '8px',
-                            p: 0.8,
-                            border: '1px solid rgba(72, 191, 227, 0.2)',
-                            '&:hover': {
-                                bgcolor: "rgba(255, 255, 255, 0.12)",
-                                border: '1px solid rgba(72, 191, 227, 0.4)',
-                            }
-                        }}>
-                            <SearchIcon sx={{ mr: 1, color: "#48BFE3" }} />
-                            <InputBase 
-                                placeholder="Search…" 
-                                sx={{ 
-                                    color: '#fff',
-                                    '& input::placeholder': {
-                                        color: 'rgba(255, 255, 255, 0.7)',
-                                    }
-                                }} 
-                                onChange={(e) => setSearchQuery(e.target.value)} 
-                            />
-                        </Box>
+                        {/* <SearchIcon sx={{ mr: 1, color: "#48BFE3" }} />
+                        <InputBase 
+                            placeholder="Search…" 
+                            sx={{ 
+                                color: '#fff',
+                                '& input::placeholder': {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                }
+                            }} 
+                            onChange={(e) => setSearchQuery(e.target.value)} 
+                        /> */}
+                        <SearchNavbar />
 
                         {authToken ? (
                             <>

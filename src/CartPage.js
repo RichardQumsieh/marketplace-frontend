@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, TextField, CardMedia, Link, createTheme, ThemeProvider } from "@mui/material";
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button, TextField, CardMedia, Link, createTheme, ThemeProvider, Box } from "@mui/material";
 import { Delete as DeleteIcon, ShoppingCart as ShoppingCartIcon } from "@mui/icons-material";
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import axios from "axios";
 import Footer from "./components/Footer";
 
@@ -92,16 +93,21 @@ const CartPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-    <Container sx={{ my: 3, minHeight: '92vh' }}>
-      <Typography sx={{ fontWeight: 'bold', color: 'text.primary' }} variant="h4" gutterBottom>
-        <ShoppingCartIcon fontSize="large" sx={{ verticalAlign: 'middle' }}/> Shopping Cart
-      </Typography>
+    <Container sx={{ my: 3, minHeight: '55vh' }}>
       {loading ? (
         <Typography>Loading...</Typography>
       ) : cartItems.length === 0 ? (
-        <Typography>Your cart is empty.</Typography>
+        <Container maxWidth='sm'>
+          <Typography variant="h6" color="text.secondary" textAlign={'center'} mt={10}>Your shopping cart is empty</Typography>
+          <Box sx={{ position: 'relative' }}>
+            <ReceiptLongIcon sx={{ position: 'absolute', left: '42%', transform: 'translate(-42%)', fontSize: {xs: '250px', md: "23vw"}, opacity: 0.3 }}/>
+          </Box>
+        </Container>
       ) : (
         <>
+          <Typography sx={{ fontWeight: 'bold', mb: 3 }} variant="h4" gutterBottom>
+            <ShoppingCartIcon fontSize="large" sx={{ verticalAlign: 'middle' }}/> Shopping Cart
+          </Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>

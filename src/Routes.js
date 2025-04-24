@@ -27,6 +27,7 @@ import About from './About';
 import BusinessPage from './BusinessPage';
 import BrandProfile from './BrandProfile';
 import PrivacyPolicy from './PrivacyPolicy';
+import ProductsPage from './ProductsPage';
 
 const App = () => {
   return (
@@ -208,6 +209,13 @@ const App = () => {
           path="/product/:id"
           element = {
             <ViewProduct />
+          }
+        />
+
+        <Route
+          path="/products"
+          element = {
+            <ProductsPage />
           }
         />
 
