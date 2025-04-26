@@ -24,7 +24,9 @@ export default function Marketplace() {
       },
     },
     typography: {
-      fontFamily: '"Lora", serif', // Default for body
+      allVariants: {
+        fontFamily: '"Lora", serif', // Default for body
+      },
       h3: {
         fontFamily: '"Playfair Display", serif',
         fontWeight: 600,
@@ -52,7 +54,6 @@ export default function Marketplace() {
     // Add more items as needed
   ];
 
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
 

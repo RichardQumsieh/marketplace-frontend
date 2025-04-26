@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemText, InputBase, Button, Box, CssBaseline, Avatar, Menu, MenuItem, Tooltip, ThemeProvider, createTheme } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography, Button, Box, CssBaseline, Avatar, Menu, MenuItem, Tooltip, ThemeProvider, createTheme } from "@mui/material";
 import { Menu as MenuIcon, Search as SearchIcon, Login as LoginIcon} from "@mui/icons-material";
 import StoreIcon from '@mui/icons-material/Store';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -10,18 +10,13 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SearchNavbar from "./SearchPage";
 
-const categories = ["Electronics", "Clothing", "Furniture", "Books", "Other"];
-
 export default function MainLayout ({ children }) {
     const navigate = useNavigate();
     const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || null);
     const [email, setEmail] = useState(null);
     const [type, setType] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(null);
-    const [drawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const toggleDrawer = (open) => () => setDrawerOpen(open);
 
     const handleMenuOpen = (event) => {
       setAnchorEl(event.currentTarget);
@@ -92,14 +87,6 @@ export default function MainLayout ({ children }) {
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
                 }}>
                     <Toolbar>
-                        <IconButton 
-                            edge="start" 
-                            color="inherit" 
-                            onClick={toggleDrawer(true)}
-                            sx={{ '&:hover': { color: '#48BFE3' } }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
                         <Typography 
                             component={Link} 
                             to={'/'} 
@@ -119,17 +106,6 @@ export default function MainLayout ({ children }) {
                                 &nbsp;Marketplace
                             </Box>
                         </Typography>
-                        {/* <SearchIcon sx={{ mr: 1, color: "#48BFE3" }} />
-                        <InputBase 
-                            placeholder="Search…" 
-                            sx={{ 
-                                color: '#fff',
-                                '& input::placeholder': {
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                }
-                            }} 
-                            onChange={(e) => setSearchQuery(e.target.value)} 
-                        /> */}
                         <SearchNavbar />
 
                         {authToken ? (
@@ -256,30 +232,6 @@ export default function MainLayout ({ children }) {
                     </Toolbar>
                 </AppBar>
                 <Toolbar />
-                
-                <Drawer 
-                    anchor="left" 
-                    open={drawerOpen} 
-                    onClose={toggleDrawer(false)}
-                    PaperProps={{
-                        sx: {
-                            bgcolor: 'rgba(13, 17, 23, 0.95)',
-                            backdropFilter: 'blur(8px)',
-                            borderRight: '1px solid rgba(72, 191, 227, 0.2)',
-                        }
-                    }}
-                >
-                    <Box sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.4)', textAlign: 'center', alignContent: 'center', justifyContent: 'center', height: 63 }}>
-                        <Typography variant="h6">Categories</Typography>
-                    </Box>
-                    <List sx={{ width: 210 }}>
-                    {categories.map((text) => (
-                        <ListItem component={Link} to={`/products/${text}`} key={text}>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                    </List>
-                </Drawer>
                 <main>{children}</main>
             </Box>
         </ThemeProvider>

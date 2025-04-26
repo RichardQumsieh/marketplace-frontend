@@ -109,6 +109,7 @@ const SearchNavbar = () => {
             <MenuItem onClick={() => handleCategorySelect('Clothing')}>Clothing</MenuItem>
             <MenuItem onClick={() => handleCategorySelect('Books')}>Books</MenuItem>
             <MenuItem onClick={() => handleCategorySelect('Home')}>Home & Garden</MenuItem>
+            <MenuItem onClick={() => handleCategorySelect('Other')}>Other</MenuItem>
         </Menu>
 
         {showResults && results.length > 0 && (
@@ -121,7 +122,7 @@ const SearchNavbar = () => {
                 right: 0,
                 mt: 1,
                 maxHeight: '400px',
-                overflow: 'auto',
+                overflow: 'hidden',
                 zIndex: 1000,
             }}
             >
@@ -135,6 +136,11 @@ const SearchNavbar = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 2,
+                    borderRadius: 2, 
+                    backdropFilter: 'blur(20px)',
+                    backgroundColor: 'rgba(30, 41, 59, 0.8)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     '&:hover': {
                     bgcolor: 'action.hover',
                     },
@@ -152,9 +158,22 @@ const SearchNavbar = () => {
                         }}
                     />
                     <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle2">{product.name}</Typography>
+                        <Typography variant="subtitle2" sx={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}>{product.name}</Typography>
+                        <Typography variant="caption" color='text.secondary' sx={{
+                          display: "-webkit-box",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: 1,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}>{product.description}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                        ${product.price}
+                          {(product.price / 1.3701710).toFixed(2)} JOD
                         </Typography>
                     </Box>
                 </Link>
