@@ -47,7 +47,9 @@ const ViewProduct = () => {
       },
     },
     typography: {
-      fontFamily: '"Lora", serif', // Default for body
+      allVariants: {
+        fontFamily: '"Lora", serif', // Default for body
+      },
       h5: {
         fontFamily: '"Playfair Display", serif',
         fontWeight: 600,

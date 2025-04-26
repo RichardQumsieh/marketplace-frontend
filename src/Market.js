@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Typography, Box, Grid2, Card, CardMedia, CardContent, Skeleton, Divider, Tooltip, Paper, createTheme, ThemeProvider, CssBaseline, CircularProgress } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Typography, Box, Grid2, Card, CardMedia, CardContent, Skeleton, Divider, Tooltip, Paper, createTheme, ThemeProvider, CssBaseline, CircularProgress, Link, Rating } from "@mui/material";
 import Carousel from 'react-material-ui-carousel';
 import axios from "axios";
 import MainLayout from "./components/MainLayout";
@@ -166,6 +165,7 @@ export default function Marketplace() {
           </Carousel>
         </Box>
         <Divider sx={{ my: 2 }} />
+        <Link href="/products" variant="body2" color="warning" mb={1} underline="hover" pl={3}>See all Products →</Link>
         <Box sx={{ flexGrow: 1, p: 3 }}>
           <Grid2 container spacing={3}>
             {loading ? (
@@ -190,7 +190,7 @@ export default function Marketplace() {
               ))
             ) : (
               products.map((product) => (
-                <Grid2 item size={4} key={product.id}>
+                <Grid2 item size={{ xs: 12, md: 4, lg: 3 }} key={product.id}>
                   <Card 
                     sx={{
                       backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -214,6 +214,18 @@ export default function Marketplace() {
                       }
                     }}
                   >
+                    <Grid2 container sx={{ px: 1, py: 0.5 }}>
+                      <Grid2 item size={6} textAlign="left">
+                        <Typography variant="body2" color="text.secondary" sx={{ px: 1, py: 0.5 }}>
+                          Sold by <Link href={`/profile/${product?.store_name}`} underline="hover" color="primary">{product.store_name}</Link>
+                        </Typography>
+                      </Grid2>
+                      <Grid2 item size={6} textAlign="right">
+                        <Typography variant="caption" color="text.secondary" sx={{ px: 1, py: 0.5 }}>
+                          {(product.verification_status === "Pending") ? "Not Yet Verified" : "Verified Seller ✅"}
+                        </Typography>
+                      </Grid2>
+                    </Grid2>
                     <CardMedia
                       component="img"
                       height="200"
@@ -230,11 +242,11 @@ export default function Marketplace() {
                     <CardContent>
                       <Tooltip title={product.name} arrow>
                         <Link
-                          to={"/product/" + product.id}
-                          style={{
+                          href={"/product/" + product.id}
+                          sx={{
                             display: "-webkit-box",
                             WebkitBoxOrient: "vertical",
-                            WebkitLineClamp: 3,
+                            WebkitLineClamp: 2,
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             maxWidth: "100%",
@@ -249,18 +261,53 @@ export default function Marketplace() {
                         >
                           {product.name}
                         </Link>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{
+                            my: 1,
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: 1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis"
+                          }}
+                        >
+                          {product.description}
+                        </Typography>
                       </Tooltip>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          color: 'rgba(255, 255, 255, 0.8)', 
-                          mt: 1,
-                          fontWeight: 'bold',
-                          fontSize: '1.1rem'
-                        }}
-                      >
-                        {Number(product.price / 1.3701710).toFixed(2)} JOD
-                      </Typography>
+                      <Grid2 container sx={{ mb: 1 }}>
+                        <Grid2 item size={6} textAlign="left">
+                          <Typography variant="body2" color="text.secondary">
+                            Category: <Typography variant="body2" color="info" display={'inline'}>{product.category}</Typography>
+                          </Typography>
+                        </Grid2>
+                        <Grid2 item size={6} textAlign="right">
+                          <Typography variant="body2" color="text.secondary">
+                            {product.quantity_in_stock} in stock
+                          </Typography>
+                        </Grid2>
+                      </Grid2>
+                      <Grid2 container sx={{ mb: 1 }}>
+                          <Grid2 item size={6} textAlign="left">
+                            <Typography 
+                              variant="body2" 
+                              color="warning"
+                              sx={{
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              {Number(product.price / 1.3701710).toFixed(2)} JOD
+                            </Typography>
+                          </Grid2>
+                          <Grid2 item size={6} textAlign="right">
+                            {(product.average_rating == 0) ? (
+                              <Typography variant="caption">Be the first to review 🎈</Typography>
+                            ) : (
+                              <Rating size="small" value={product.average_rating} />
+                            )}
+                          </Grid2>
+                      </Grid2>
                     </CardContent>
                   </Card>
                 </Grid2>

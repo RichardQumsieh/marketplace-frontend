@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { AppBar, Toolbar, IconButton, Typography, Button, Box, CssBaseline, Avatar, Menu, MenuItem, Tooltip, ThemeProvider, createTheme } from "@mui/material";
-import { Menu as MenuIcon, Search as SearchIcon, Login as LoginIcon} from "@mui/icons-material";
+import { AppBar, Toolbar, IconButton, Typography, Button, Box, CssBaseline, Avatar, Menu, MenuItem, Tooltip, ThemeProvider, createTheme, Accordion, AccordionSummary, AccordionDetails, Divider, Drawer, Grid2, Link } from "@mui/material";
+import { Menu as MenuIcon, Search as SearchIcon, Login as LoginIcon, Close} from "@mui/icons-material";
 import StoreIcon from '@mui/icons-material/Store';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link, useNavigate } from "react-router-dom";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SearchNavbar from "./SearchPage";
 
@@ -17,6 +18,7 @@ export default function MainLayout ({ children }) {
     const [type, setType] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [openDrawer, setOpenDrawer] = useState(false);
 
     const handleMenuOpen = (event) => {
       setAnchorEl(event.currentTarget);
@@ -87,9 +89,12 @@ export default function MainLayout ({ children }) {
                     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
                 }}>
                     <Toolbar>
+                        <IconButton onClick={()=>{ setOpenDrawer(true); }}>
+                            <MenuIcon sx={{ color: '#fff' }} />
+                        </IconButton>
                         <Typography 
                             component={Link} 
-                            to={'/'} 
+                            href={'/'} 
                             variant="h6" 
                             sx={{ 
                                 flexGrow: 1, 
@@ -166,7 +171,7 @@ export default function MainLayout ({ children }) {
                                                 }}
                                             >
                                                 <SettingsIcon fontSize="small" sx={{ mr: 1 }} />
-                                                Go to Settings
+                                                Go href Settings
                                             </MenuItem>
                                             <MenuItem
                                                 onClick={() => {
@@ -200,7 +205,7 @@ export default function MainLayout ({ children }) {
                                             }}
                                         >
                                             <SettingsIcon fontSize="small" sx={{ mr: 1 }} />
-                                            Go to Settings
+                                            Go href Settings
                                         </MenuItem>
                                       </>
                                     )}
@@ -233,6 +238,97 @@ export default function MainLayout ({ children }) {
                 </AppBar>
                 <Toolbar />
                 <main>{children}</main>
+
+                <Drawer
+                onClose={() => setOpenDrawer(false)}
+                open={openDrawer}
+                anchor="left"
+                sx={{
+                    width: 500,
+                    '& .MuiDrawer-paper': {
+                        width: 500,
+                        backgroundColor: 'rgba(13, 17, 23, 0.2)',
+                        padding: 2,
+                        backdropFilter: 'blur(15px)',
+                        zIndex: 1200,
+                        borderRight: '1px solid rgba(72, 191, 227, 0.2)',
+                    },
+                }}>
+                    <Grid2 container sx={{ mb: 2 }} justifyContent="space-between" alignItems="center">
+                        <Grid2 item>
+                            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                Explore More
+                            </Typography>
+                        </Grid2>
+                        <Grid2 item>
+                            <IconButton onClick={() => setOpenDrawer(false)} sx={{ color: '#fff' }}>
+                                <Close fontSize="small" />
+                            </IconButton>
+                        </Grid2>
+                    </Grid2>
+                    <Accordion variant="outlined">
+                        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#48BFE3' }} />}>
+                            <Typography sx={{ fontWeight: 500 }}>Products</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography component="ul" sx={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                                <li>
+                                    - <Link href="/products?category=Electronics" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Electronics
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/products?category=Fashion" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Fashion
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/products?category=Home-appliances" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Home Appliances
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/products?category=Books" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Books
+                                    </Link>
+                                </li>
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion variant="outlined">
+                        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#48BFE3' }} />}>
+                            <Typography sx={{ fontWeight: 500 }}>Quick Links</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography component="ul" sx={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                                <li>
+                                    - <Link href="/about" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        About Us
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/business" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Business Page
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/contact" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Contact
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/privacy-policy" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Privacy Policy
+                                    </Link>
+                                </li>
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Divider sx={{ my: 3, borderColor: 'rgba(72, 191, 227, 0.3)' }} />
+                    <Typography variant="caption" color="text.secondary">
+                        Cookies
+                    </Typography>
+                </Drawer>
             </Box>
         </ThemeProvider>
     );
