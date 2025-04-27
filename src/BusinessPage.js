@@ -8,7 +8,9 @@ import {
   CardContent,
   CardMedia,
   Button,
-  useTheme
+  ThemeProvider,
+  createTheme,
+  CssBaseline
 } from "@mui/material";
 import { motion } from "framer-motion";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -18,6 +20,7 @@ import BusinessNavBar from "./components/BusinessNavBar";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useNavigate } from "react-router-dom";
+import Footer from "./components/Footer";
 
 const styles = {
   hero: {
@@ -28,6 +31,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     color: 'white',
+    position: 'relative', // Add position for SVG placement
+  },
+  heroSvg: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 'auto',
   },
   section: {
     py: 8,
@@ -49,7 +59,7 @@ const styles = {
     borderRadius: 2,
   },
   testimonial: {
-    background: '#f5f5f5',
+    background: 'rgba(70,70,70,0.6)',
     borderRadius: 2,
     p: 4,
     position: 'relative',
@@ -65,7 +75,6 @@ const styles = {
 };
 
 const BusinessPage = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,8 +105,41 @@ const BusinessPage = () => {
     },
   ];
 
+    const theme = createTheme({
+      palette: {
+        mode: 'dark',
+        primary: {
+          main: '#1976d2', // A more professional blue
+        },
+        background: {
+          default: '#121212', // Dark background
+          paper: '#1e1e1e', // Slightly lighter for cards and papers
+        },
+        text: {
+          primary: '#ffffff', // White text
+          secondary: '#b3b3b3', // Light grey for secondary text
+        },
+      },
+      typography: {
+        allVariants: {
+          fontFamily: '"Lora", serif', // Default for body
+        },
+        h3: {
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 600,
+          color: 'white'
+        },
+        h5: {
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 500,
+          color: 'white'
+        },
+      },
+    });
+
   return (
-    <BusinessNavBar>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       {/* Hero Section */}
       <Box sx={styles.hero}>
         <Container>
@@ -119,47 +161,29 @@ const BusinessPage = () => {
             )}
           </motion.div>
         </Container>
+        {/* Add SVG at the bottom of the hero section */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          style={styles.heroSvg}
+        >
+          <path
+            fill="#1976d2"
+            fillOpacity="0.2"
+            d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,218.7C672,213,768,171,864,165.3C960,160,1056,192,1152,213.3C1248,235,1344,245,1392,250.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
+        </svg>
       </Box>
 
-      {/* Features Section */}
-      <Container sx={styles.section}>
-        <Typography variant="h3" textAlign="center" gutterBottom data-aos="fade-up">
-          Why Choose Us?
-        </Typography>
-        <Grid2 container spacing={4} sx={{ mt: 4 }}>
-          {features.map((feature, index) => (
-            <Grid2 item size={4} key={index} data-aos="fade-up">
-              <Card sx={styles.card}>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={feature.image}
-                  alt={feature.title}
-                />
-                <CardContent sx={{ textAlign: 'center' }}>
-                  {feature.icon}
-                  <Typography variant="h5" sx={{ my: 2 }}>
-                    {feature.title}
-                  </Typography>
-                  <Typography color="text.secondary">
-                    {feature.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid2>
-          ))}
-        </Grid2>
-      </Container>
-
       {/* Statistics Section */}
-      <Box sx={{ bgcolor: 'background.default', ...styles.section }}>
+      <Box sx={{ ...styles.section }}>
         <Container>
           <Grid2 container spacing={4}>
             {[
-              { number: "10K+", label: "Active Drivers" },
-              { number: "1M+", label: "Deliveries Completed" },
-              { number: "98%", label: "Satisfaction Rate" },
-              { number: "24/7", label: "Customer Support" },
+              { number: "10K+", label: "Active Drivers", svg: "/images/driver-icon.svg" },
+              { number: "1M+", label: "Deliveries Completed", svg: "/images/delivery-icon.svg" },
+              { number: "98%", label: "Satisfaction Rate", svg: "/images/satisfaction-icon.svg" },
+              { number: "24/7", label: "Customer Support", svg: "/images/support-icon.svg" },
             ].map((stat, index) => (
               <Grid2 item size={3} key={index} data-aos="zoom-in">
                 <Box sx={styles.statCard}>
@@ -208,7 +232,7 @@ const BusinessPage = () => {
 
       <Box 
         sx={{ 
-          bgcolor: theme.palette.primary.main, 
+          bgcolor: theme.palette.primary.main,
           color: 'white',
           py: 8,
         }}
@@ -230,11 +254,7 @@ const BusinessPage = () => {
                 size="large" 
                 fullWidth
                 sx={{ 
-                  bgcolor: 'white', 
                   color: theme.palette.primary.main,
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                  }
                 }}
                 onClick={() => { navigate('/delivery/signup'); }}
               >
@@ -245,7 +265,8 @@ const BusinessPage = () => {
           </Grid2>
         </Container>
       </Box>
-    </BusinessNavBar>
+      <Footer />
+    </ThemeProvider>
   );
 };
 
