@@ -12,7 +12,6 @@ import {
   CardContent,
   Rating,
   Button,
-  Divider,
   ThemeProvider,
   createTheme,
   CssBaseline,
@@ -22,7 +21,9 @@ import {
   alpha,
   Chip,
   Drawer,
-  CircularProgress
+  CircularProgress,
+  Link,
+  Skeleton
 } from '@mui/material';
 import axios from 'axios';
 import Footer from './components/Footer';
@@ -30,17 +31,23 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const categories = ['All', 'Electronics', 'Clothing', 'Furniture', 'Books', 'Other'];
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [featuredProduct, setFeaturedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+
+  const location = useLocation(); // Get the current location
+  const queryParams = new URLSearchParams(location.search); // Parse query parameters
+  const selectedCategory = queryParams.get('category') || 'All';
 
   useEffect(() => {
     fetchProducts();
+    setLoading(false);
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -49,7 +56,6 @@ export default function ProductsPage() {
       setFeaturedProduct(products[randomIndex]);
     };
 
-    setLoading(false);
   }, [products]);
 
   const fetchProducts = async () => {
@@ -127,7 +133,9 @@ export default function ProductsPage() {
                 <ListItemButton
                   key={cat}
                   selected={selectedCategory === cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  component={Link}
+                  href={`?category=${cat}`}
+                  underline="none"
                   sx={{
                     borderRadius: 1,
                     mx: 1,
@@ -162,11 +170,43 @@ export default function ProductsPage() {
             flexGrow: 1,
             width: { sm: `calc(100% - 160px)` },
             ml: { sm: '160px' },
+            minHeight: '53vh',
           }}
         >
           <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
             {/* Featured Product Section */}
-            {featuredProduct && (
+            {!featuredProduct ? (
+              // Skeleton animation while featuredProduct is loading
+              <Paper
+                elevation={0}
+                sx={{
+                  mt: 3,
+                  background: alpha(theme.palette.background.paper, 0.8),
+                  backdropFilter: 'blur(20px)',
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  borderRadius: 3,
+                  p: 2,
+                }}
+              >
+                <Grid2 container spacing={2}>
+                  {/* Skeleton for the image */}
+                  <Grid2 item size={{ xs: 12, md: 4 }}>
+                    <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+                  </Grid2>
+
+                  {/* Skeleton for the details */}
+                  <Grid2 item size={{ xs: 12, md: 8 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <Skeleton variant="text" height={40} width="60%" />
+                      <Skeleton variant="text" height={30} width="40%" />
+                      <Skeleton variant="text" height={20} width="80%" />
+                      <Skeleton variant="rectangular" height={100} sx={{ borderRadius: 2 }} />
+                      <Skeleton variant="text" height={40} width="30%" />
+                    </Box>
+                  </Grid2>
+                </Grid2>
+              </Paper>
+            ) : (
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -332,9 +372,9 @@ export default function ProductsPage() {
 
             {/* Hero Section */}
             <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              initial="hidden"
+              animate="visible"
+              transition={{ duration: 1.2, ease: 'easeOut' }}
             >
               <Box sx={{ textAlign: 'center', py: 6 }}>
                 <Typography

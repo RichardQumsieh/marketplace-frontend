@@ -28,6 +28,7 @@ import BusinessPage from './BusinessPage';
 import BrandProfile from './BrandProfile';
 import PrivacyPolicy from './PrivacyPolicy';
 import ProductsPage from './ProductsPage';
+import OrdersHistory from './OrdersHistory';
 
 const App = () => {
   return (
@@ -118,12 +119,20 @@ const App = () => {
           }
         />
 
-
         <Route
           path="/cart"
           element={
             <ProtectedRoute allowedUserTypes={['Buyer']}>
               <CartPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders-history"
+          element={
+            <ProtectedRoute allowedUserTypes={['Buyer']}>
+              <OrdersHistory />
             </ProtectedRoute>
           }
         />

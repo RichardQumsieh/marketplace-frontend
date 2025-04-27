@@ -158,6 +158,9 @@ const CartPage = () => {
           </Button>
         </>
       )}
+      <Link href={'/orders-history'} underline="hover" color="warning" sx={{ display: 'block', mt: 3 }}>
+        See your order history <ReceiptLongIcon sx={{ verticalAlign: 'middle' }} />
+      </Link>
     </Container>
     <Footer />
     </ThemeProvider>
