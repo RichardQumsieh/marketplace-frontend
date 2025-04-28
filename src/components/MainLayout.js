@@ -321,6 +321,11 @@ export default function MainLayout ({ children }) {
                                         Privacy Policy
                                     </Link>
                                 </li>
+                                <li>
+                                    - <Link href="/orders-history" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Orders History
+                                    </Link>
+                                </li>
                             </Typography>
                         </AccordionDetails>
                     </Accordion>

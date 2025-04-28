@@ -1,14 +1,19 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CardMedia, CircularProgress, Container, createTheme, Divider, Drawer, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CardMedia, CircularProgress, Container, createTheme, Divider, Drawer, Grid2, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
+import RefundForm from "./components/RefundForm"; // Import RefundForm
 import axios from "axios";
+import RefundSuccessAnimation from "./components/RefundSuccessAnimation";
 
 export default function OrdersHistory() {
     const [cart, setCart] = useState([]);
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [refundDrawerOpen, setRefundDrawerOpen] = useState(false); // State to control RefundForm visibility
+    const [selectedOrder, setSelectedOrder] = useState(null); // State to store the selected order
+    const [showSuccess, setShowSuccess] = useState(false);
+    
     useEffect(() => {
         const fetchHistory = async () => {
             try {
@@ -56,6 +61,12 @@ export default function OrdersHistory() {
         },
     });
 
+    const handleRefundSuccess = () => {
+        setRefundDrawerOpen(false); // Close the RefundForm after successful submission
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 5000);
+    };
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -72,7 +83,7 @@ export default function OrdersHistory() {
                     anchor="right"
                     open={true}
                     sx={{
-                        display: { xs: 'none', sm: 'block' },
+                        display: { xs: 'none', lg: 'block' },
                         width: 150,
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
@@ -111,7 +122,7 @@ export default function OrdersHistory() {
                         </Link>
                 </Drawer>
             )}
-            <Container maxWidth="lg" sx={{ mt: 5, mb: 5, minHeight: '53vh' }}>
+            <Container maxWidth="md" sx={{ mt: 5, mb: 5, minHeight: '53vh' }}>
                 {history.length > 0 ? (
                     <Box sx={{ mt: 5 }}>
                         <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
@@ -144,47 +155,32 @@ export default function OrdersHistory() {
                                     </Box>
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <TableContainer sx={{ mt: -2 }}>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Image</TableCell>
-                                                    <TableCell>Product</TableCell>
-                                                    <TableCell align="center">Quantity</TableCell>
-                                                    <TableCell align="center">Price (JOD)</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {order.items?.map((item, index) => (
-                                                    <TableRow key={index}>
-                                                        <TableCell>
-                                                            <CardMedia
-                                                                component="img"
-                                                                height="80"
-                                                                sx={{
-                                                                    my: 1,
-                                                                    px: 1,
-                                                                    objectFit: 'contain',
-                                                                    borderRadius: 2,
-                                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                                }}
-                                                                image={`data:image/jpeg;base64,${item.image}`}
-                                                                alt={item.product}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell>{item.product}</TableCell>
-                                                        <TableCell align="center">{item.quantity}</TableCell>
-                                                        <TableCell align="center">
-                                                            {Number(item.price / 1.3701710).toFixed(2)}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
+                                    {order.items?.map((item, index) => (
+                                        <Grid2 container key={index}>
+                                            <Grid2 item size={{ xs: 12, sm: 2 }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    sx={{
+                                                        objectFit: 'contain',
+                                                    }}
+                                                    image={`data:image/jpeg;base64,${item.image}`}
+                                                    alt={item.product}
+                                                />
+                                            </Grid2>
+                                            <Grid2 item size={{ xs: 12, sm: 10 }} sx={{ pl: 2 }}>
+                                                <Typography variant="body1" sx={{ mt: { xs: 1, sm: 0 } }}>{item.product}</Typography>
+                                                <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
+                                                    Quantity: {item.quantity}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Price: {Number(item.price / 1.3701710).toFixed(2)} JOD
+                                                </Typography>
+                                            </Grid2>
+                                        </Grid2>
+                                    ))}
                                     <Box
                                         sx={{
-                                            mt: 3,
+                                            mt: 2,
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
@@ -199,11 +195,14 @@ export default function OrdersHistory() {
                                     </Box>
                                     <Button
                                         variant="contained"
-                                        color="primary"
+                                        color="error"
                                         sx={{ mt: 2, width: '100%' }}
-                                        onClick={() => alert(`Reordering Order #${order.id}`)}
+                                        onClick={() => {
+                                            setSelectedOrder(order);
+                                            setRefundDrawerOpen(true);
+                                        }}
                                     >
-                                        Reorder
+                                        Issue Refund
                                     </Button>
                                 </AccordionDetails>
                             </Accordion>
@@ -215,6 +214,18 @@ export default function OrdersHistory() {
                     </Typography>
                 )}
             </Container>
+            {refundDrawerOpen && (
+                <RefundForm
+                    order={selectedOrder}
+                    isOpen={refundDrawerOpen}
+                    onClose={() => setRefundDrawerOpen(false)}
+                    onSuccess={handleRefundSuccess}
+                />
+            )}
+            <RefundSuccessAnimation 
+                isVisible={showSuccess} 
+                onClose={() => setShowSuccess(false)} 
+            />
             <Footer />
         </ThemeProvider>
     );

@@ -97,7 +97,7 @@ const ViewProduct = () => {
 
   const addToCart = async (productId, quantity) => {
     try {
-        const response = await axios.post(
+        await axios.post(
             "http://localhost:5000/api/cart/add",
             { productId, quantity },
             {
