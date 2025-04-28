@@ -23,7 +23,7 @@ import {
   Container,
   Fade
 } from "@mui/material";
-import { Delete, CloudUpload } from "@mui/icons-material";
+import { Delete, CloudUpload, Dashboard, Shop } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from "axios";
@@ -47,7 +47,6 @@ const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [selectedTab, setSelectedTab] = useState(0);
   const [seller, setSeller] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -76,12 +75,12 @@ const EditProduct = () => {
     const fetchSellerDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/seller/${localStorage.getItem('id')}`, {
+        const response = await axios.get(`http://localhost:5000/api/seller/basic`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include token
           },
         });
-        setSeller(response.data.seller);
+        setSeller(response.data);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -316,12 +315,30 @@ const EditProduct = () => {
                   >
                     <MenuItem
                       onClick={() => {
-                        navigate('/seller-profile');
+                        navigate('/seller-profile/Dashboard');
+                        handleMenuClose();
+                      }}
+                    >
+                      <Dashboard fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+                      Dashboard
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        navigate('/seller-profile/Products');
+                        handleMenuClose();
+                      }}
+                    >
+                      <Shop fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+                      Products
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        navigate('/seller-profile/Settings');
                         handleMenuClose();
                       }}
                     >
                       <SettingsIcon fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-                      Dashboard
+                      Settings
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
                       <LogoutIcon fontSize="small" sx={{ mr: 1, color: 'error.main' }} />

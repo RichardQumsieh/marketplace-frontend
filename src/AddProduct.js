@@ -13,32 +13,23 @@ import {
   createTheme,
   Alert,
   CssBaseline,
-  Drawer,
-  Tabs,
-  Tab,
   Link,
   styled,
   AppBar,
   alpha,
   CircularProgress,
-  useMediaQuery,
   Avatar,
   Menu,
   Fade,
   Container
 } from "@mui/material";
-import { AddPhotoAlternate, Delete } from "@mui/icons-material";
+import { AddPhotoAlternate, Dashboard, Delete, Shop } from "@mui/icons-material";
 import axios from "axios";
 import { isAuthenticated } from "./utils/auth";
 import { useNavigate } from "react-router-dom";
-import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import LogoutIcon from '@mui/icons-material/Logout';
-import CloseIcon from '@mui/icons-material/Close';
 import LaunchIcon from '@mui/icons-material/Launch';
-import Carousel from "react-material-ui-carousel";
 import Footer from "./components/Footer";
 
 const GlassAppBar = styled(AppBar)(({ theme }) => ({
@@ -50,16 +41,6 @@ const GlassAppBar = styled(AppBar)(({ theme }) => ({
   '&.scrolled': {
     backgroundColor: alpha(theme.palette.background.paper, 0.95),
     boxShadow: theme.shadows[4]
-  }
-}));
-
-const FloatingDrawer = styled(Drawer)(({ theme }) => ({
-  '& .MuiDrawer-paper': {
-    width: 300,
-    borderRight: 'none',
-    boxShadow: theme.shadows[16],
-    background: `linear-gradient(195deg, ${theme.palette.background.paper} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`,
-    backdropFilter: 'blur(12px)'
   }
 }));
 
@@ -77,7 +58,6 @@ const AddProduct = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const [seller, setSeller] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   
   const [anchorEl, setAnchorEl] = useState(null);
@@ -176,12 +156,12 @@ const AddProduct = () => {
     const fetchSellerDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/seller/${localStorage.getItem('id')}`, {
+        const response = await axios.get(`http://localhost:5000/api/seller/basic`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include token
           },
         });
-        setSeller(response.data.seller);
+        setSeller(response.data);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -203,83 +183,33 @@ const AddProduct = () => {
     palette: {
       mode: 'dark',
       primary: {
-        main: '#90caf9',
-        light: '#e3f2fd',
-        dark: '#42a5f5'
-      },
-      secondary: {
-        main: '#f48fb1',
-        light: '#f8bbd0',
-        dark: '#f06292'
+        main: '#1976d2', // A more professional blue
       },
       background: {
-        default: '#121212',
-        paper: '#1e1e1e'
+        default: '#121212', // Dark background
+        paper: '#1e1e1e', // Slightly lighter for cards and papers
       },
       text: {
-        primary: '#ffffff',
-        secondary: 'rgba(255, 255, 255, 0.7)'
-      }
+        primary: '#ffffff', // White text
+        secondary: '#b3b3b3', // Light grey for secondary text
+      },
     },
     typography: {
       allVariants: {
-        fontFamily: '"Inter", "Roboto", sans-serif',
+        fontFamily: '"Lora", serif', // Default for body
       },
-      h6: {
+      h3: {
         fontFamily: '"Playfair Display", serif',
-        fontWeight: 500
-      }
+        fontWeight: 600,
+        color: 'white'
+      },
+      h5: {
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 500,
+        color: 'white'
+      },
     },
-    shape: {
-      borderRadius: 12
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            textTransform: 'none',
-            borderRadius: 8,
-            padding: '8px 16px'
-          }
-        }
-      }
-    }
   });
-
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
-  const tabs = (
-    <Tabs
-      value={selectedTab}
-      onChange={(_, newValue) => setSelectedTab(newValue)}
-      orientation={isMobile ? 'vertical' : 'horizontal'}
-      variant={isMobile ? 'fullWidth' : 'scrollable'}
-      scrollButtons="auto"
-      textColor="primary"
-      indicatorColor="primary"
-      sx={{
-        '& .MuiTab-root': {
-          minHeight: 64,
-          textTransform: 'none',
-          fontWeight: 500,
-          fontSize: '0.95rem',
-          minWidth: 'unset',
-          px: 3,
-          '&.Mui-selected': {
-            fontWeight: 600,
-            bgcolor: isMobile ? alpha(theme.palette.primary.main, 0.08) : 'transparent'
-          },
-          '& svg': {
-            mr: 1.5,
-            fontSize: '1.2rem'
-          }
-        }
-      }}
-    >
-      <Tab label="Product" icon={<AddBoxIcon />} iconPosition="start" />
-      <Tab label="Preview" icon={<VisibilityIcon />} iconPosition="start" />
-    </Tabs>
-  );
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -309,43 +239,12 @@ const AddProduct = () => {
           minHeight: '100vh',
           background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
         }}>
-          
-        <FloatingDrawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          ModalProps={{
-            BackdropProps: {
-              sx: {
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                backdropFilter: 'blur(4px)'
-              }
-            }
-          }}
-        >
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'flex-end', 
-            p: 2,
-            position: 'sticky',
-            top: 0,
-            bgcolor: 'background.paper',
-            zIndex: 1,
-            borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`
-          }}>
-            <IconButton onClick={() => setDrawerOpen(false)}>
-              <CloseIcon sx={{ color: 'text.secondary' }} />
-            </IconButton>
-          </Box>
-          {tabs}
-        </FloatingDrawer>
         
         <GlassAppBar 
           position="sticky"
           className={scrolled ? 'scrolled' : ''}
           sx={{
             zIndex: theme.zIndex.drawer - 1,
-            minHeight: 45
           }}
         >
           <Box sx={{ 
@@ -357,27 +256,6 @@ const AddProduct = () => {
             justifyContent: 'space-between',
             px: { xs: 2, sm: 4 }
           }}>
-            {isMobile ? (
-              <>
-                <IconButton
-                  edge="start"
-                  onClick={() => setDrawerOpen(true)}
-                  sx={{ mr: 1 }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Box sx={{ flexGrow: 1 }} />
-                <Typography variant="h6" sx={{ 
-                  fontWeight: 600,
-                  background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  {['Product', 'Preview'][selectedTab]}
-                </Typography>
-              </>
-            ) : (
-              <>
                 <Typography variant="h6" sx={{ 
                   fontWeight: 700,
                   background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
@@ -392,7 +270,6 @@ const AddProduct = () => {
                   alignItems: 'center',
                   gap: 2
                 }}>
-                  {tabs}
                   
                   <Box sx={{ 
                     display: 'flex', 
@@ -413,6 +290,7 @@ const AddProduct = () => {
                     <IconButton 
                       onClick={handleMenuOpen} 
                       sx={{
+                        my: 0.5,
                         p: 0.5,
                         border: '2px solid',
                         borderColor: 'primary.main',
@@ -429,7 +307,7 @@ const AddProduct = () => {
                         sx={{
                           width: 32,
                           height: 32,
-                          bgcolor: 'primary.main'
+                          bgcolor: 'primary.main',
                         }}
                       />
                     </IconButton>
@@ -454,12 +332,30 @@ const AddProduct = () => {
                     >
                       <MenuItem
                         onClick={() => {
-                          navigate('/seller-profile');
+                          navigate('/seller-profile/Dashboard');
+                          handleMenuClose();
+                        }}
+                      >
+                        <Dashboard fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+                        Dashboard
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate('/seller-profile/Products');
+                          handleMenuClose();
+                        }}
+                      >
+                        <Shop fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+                        Products
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate('/seller-profile/Settings');
                           handleMenuClose();
                         }}
                       >
                         <SettingsIcon fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-                        Dashboard
+                        Settings
                       </MenuItem>
                       <MenuItem onClick={handleLogout}>
                         <LogoutIcon fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
@@ -468,17 +364,14 @@ const AddProduct = () => {
                     </Menu>
                   </Box>
                 </Box>
-              </>
-            )}
           </Box>
         </GlassAppBar>
 
-        <Box sx={{ py: 3 }}>
+        <Box sx={{ py: 2 }}>
           <Container maxWidth='xl'>
             <Fade in timeout={500}>
               <Box>
-                {selectedTab === 0 ?
-                (<Box>
+                <Box>
                   {error && (
                     <Typography>
                         <Alert color="error">{error}</Alert>
@@ -642,56 +535,7 @@ const AddProduct = () => {
                       Submit Product
                       </Button>
                   </Paper>
-                  </Box>)
-                : (
-                  <Box sx={{ margin: "auto" }}>
-                    <Grid2 container spacing={3}>
-                      <Grid2 item size = {{ xs: 12, sm: 4 }}>
-                        {productDetails.images.length > 0 ? (
-                            <Carousel>
-                              {productDetails.images.map((image, index) => (
-                                <Image
-                                  key={index}
-                                  src={`${image.preview}`}
-                                  alt={`Product Image ${index + 1}`}
-                                />
-                              ))}
-                            </Carousel>
-                        ) : (
-                          <Typography>No images available</Typography>
-                        )}
-                      </Grid2>
-              
-                      <Grid2 item size = {{ xs: 12, sm: 8 }}>
-                        <Paper sx={{ padding: "20px", borderRadius: "10px" }} elevation={3}>
-                          <Typography variant="h6" fontWeight="bold">
-                            {productDetails.name}
-                          </Typography>
-                          <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
-                            {productDetails.price} JOD
-                          </Typography>
-                          <Typography variant="body1" sx={{ mt: 2, whiteSpace: 'pre-line' }}>
-                            {productDetails.description}
-                          </Typography>
-                          <Typography variant="body2" sx={{ mt: 2, fontWeight: "bold" }}>
-                            Category: {productDetails.category || "N/A"}
-                          </Typography>
-                          <Typography variant="body2" sx={{ mt: 1 }}>
-                            In Stock: {productDetails.quantity}
-                          </Typography>
-
-                            <Button
-                            variant="contained"
-                            color="success"
-                            sx={{ mt: 3, width: "100%" }}
-                            >
-                              Add to Cart
-                            </Button>
-                        </Paper>
-                      </Grid2>
-                    </Grid2>
                   </Box>
-                )}
             </Box>
           </Fade>
         </Container>

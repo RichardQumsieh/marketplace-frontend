@@ -99,6 +99,9 @@ const CartPage = () => {
       ) : cartItems.length === 0 ? (
         <Container maxWidth='sm'>
           <Typography variant="h6" color="text.secondary" textAlign={'center'} mt={10}>Your shopping cart is empty</Typography>
+          <Link href={'/orders-history'} underline="hover" color="warning" textAlign={'center'} sx={{ display: 'block', mt: 3 }}>
+            See your order history
+          </Link>
           <Box sx={{ position: 'relative' }}>
             <ReceiptLongIcon sx={{ position: 'absolute', left: '42%', transform: 'translate(-42%)', fontSize: {xs: '250px', md: "23vw"}, opacity: 0.3 }}/>
           </Box>
@@ -156,11 +159,11 @@ const CartPage = () => {
           <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={() => { window.location.href= '/checkout'; }}>
             Proceed to Checkout
           </Button>
+          <Link href={'/orders-history'} underline="hover" color="warning" sx={{ display: 'block', mt: 3 }}>
+            See your order history <ReceiptLongIcon sx={{ verticalAlign: 'middle' }} />
+          </Link>
         </>
       )}
-      <Link href={'/orders-history'} underline="hover" color="warning" sx={{ display: 'block', mt: 3 }}>
-        See your order history <ReceiptLongIcon sx={{ verticalAlign: 'middle' }} />
-      </Link>
     </Container>
     <Footer />
     </ThemeProvider>

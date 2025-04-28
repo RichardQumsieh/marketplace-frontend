@@ -156,10 +156,11 @@ export default function OrdersHistory() {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {order.items?.map((item, index) => (
-                                        <Grid2 container key={index}>
+                                        <Grid2 container key={index} sx={{ mb: 1 }}>
                                             <Grid2 item size={{ xs: 12, sm: 2 }}>
                                                 <CardMedia
                                                     component="img"
+                                                    height="150px"
                                                     sx={{
                                                         objectFit: 'contain',
                                                     }}
@@ -168,7 +169,7 @@ export default function OrdersHistory() {
                                                 />
                                             </Grid2>
                                             <Grid2 item size={{ xs: 12, sm: 10 }} sx={{ pl: 2 }}>
-                                                <Typography variant="body1" sx={{ mt: { xs: 1, sm: 0 } }}>{item.product}</Typography>
+                                                <Typography component={Link} href={`/product/${item.product_id}`} underline="hover" variant="body1" sx={{ mt: { xs: 1, sm: 0 } }}>{item.product}</Typography>
                                                 <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
                                                     Quantity: {item.quantity}
                                                 </Typography>

@@ -10,7 +10,6 @@ import PublicRoute from './components/PublicRoute';
 import LayoutWrapper from './components/LayoutWrapper';
 import ForgotPassword from './ForgotPassword';
 import AdminAuthPage from './AdminsAuth';
-import SellerProfilePage from './SellerProfile';
 import AddProduct from './AddProduct';
 import EditProduct from './EditProduct';
 import MarketPage from './Market';
@@ -29,6 +28,9 @@ import BrandProfile from './BrandProfile';
 import PrivacyPolicy from './PrivacyPolicy';
 import ProductsPage from './ProductsPage';
 import OrdersHistory from './OrdersHistory';
+import SellerSettings from './SellerSettings';
+import SellerProducts from './SellerProducts';
+import SellerDashboard from './SellerDashboard';
 
 const App = () => {
   return (
@@ -174,10 +176,28 @@ const App = () => {
         />
 
         <Route
-          path="/seller-profile"
+          path="/seller-profile/Dashboard"
           element={
             <ProtectedRoute allowedUserTypes={['Seller']}>
-              <SellerProfilePage />
+              <SellerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller-profile/Settings"
+          element={
+            <ProtectedRoute allowedUserTypes={['Seller']}>
+              <SellerSettings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller-profile/Products"
+          element={
+            <ProtectedRoute allowedUserTypes={['Seller']}>
+              <SellerProducts />
             </ProtectedRoute>
           }
         />
