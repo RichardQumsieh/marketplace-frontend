@@ -21,13 +21,17 @@ import {
   Avatar,
   Menu,
   Container,
-  Fade
+  Fade,
+  Switch
 } from "@mui/material";
 import { Delete, CloudUpload, Dashboard, Shop } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from "axios";
 import Footer from "./components/Footer";
+import ProductDetailsForm from "./components/ProductForms/ProductDetailsForm";
+import ProductSpecsForm from "./components/ProductForms/ProductSpecsForm";
+import ProductPricingForm from "./components/ProductForms/ProductPricingForm";
 
 const GlassAppBar = styled(AppBar)(({ theme }) => ({
   backdropFilter: 'blur(12px)',
@@ -60,17 +64,29 @@ const EditProduct = () => {
     setAnchorEl(null);
   };
 
-  const [product, setProduct] = useState(null);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    quantity_in_stock: '',
+    category: 'Electronics',
+    width_cm: '',
+    height_cm: '',
+    depth_cm: '',
+    weight_kg: '',
+    sku: '',
+    barcode: '',
+    condition: 'new',
+    is_digital: false,
+    requires_shipping: true,
+    tax_class: 'standard'
+  });
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [removedImageIds, setRemovedImageIds] = useState([]);
   const [newImages, setNewImages] = useState([]);
-  
+
   useEffect(() => {
     const fetchSellerDetails = async () => {
       try {
@@ -94,13 +110,24 @@ const EditProduct = () => {
     axios.get(`http://localhost:5000/api/products/${id}`)
       .then(response => {
         const data = response.data;
-        setProduct(data);
-        setName(data.name);
-        setPrice(data.price);
-        setQuantity(data.quantity_in_stock);
-        setCategory(data.category);
-        setDescription(data.description);
-        setImages(data.images);
+        setFormData({
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          quantity_in_stock: data.quantity_in_stock,
+          category: data.category,
+          width_cm: data.width_cm || '',
+          height_cm: data.height_cm || '',
+          depth_cm: data.depth_cm || '',
+          weight_kg: data.weight_kg || '',
+          sku: data.sku,
+          barcode: data.barcode,
+          condition: String(data.condition).toLowerCase(),
+          is_digital: data.is_digital,
+          requires_shipping: data.requires_shipping,
+          tax_class: data.tax_class
+        });
+        setImages(data.images.map(img => ({ id: img.id, base64: img.base64 })));
       })
       .finally(() => setLoading(false));
 
@@ -128,13 +155,22 @@ const EditProduct = () => {
   const handleSaveChanges = async (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("quantity_in_stock", quantity);
-    formData.append("category", category);
-    formData.append("description", description);
-    formData.append("removedImageIds", JSON.stringify(removedImageIds));
+    const Data = new FormData();
+    Data.append('name', formData.name);
+    Data.append('description', formData.description);
+    Data.append('price', parseFloat(formData.price));
+    Data.append('quantity_in_stock', Number(formData.quantity_in_stock).toFixed(0));
+    Data.append('sku', formData.sku);
+    Data.append('barcode', formData.barcode);
+    Data.append('category', formData.category);
+    Data.append('width_cm', formData.width_cm ? parseFloat(formData.width_cm) : '');
+    Data.append('height_cm', formData.height_cm ? parseFloat(formData.height_cm) : '');
+    Data.append('depth_cm', formData.depth_cm ? parseFloat(formData.depth_cm) : '');
+    Data.append('weight_kg', formData.weight_kg ? parseFloat(formData.weight_kg) : '');
+    Data.append('condition', formData.condition);
+    Data.append('is_digital', formData.is_digital);
+    Data.append('requires_shipping', formData.requires_shipping);
+    Data.append('tax_class', formData.tax_class);
     newImages.forEach((file) => formData.append("newImages", file));
 
     axios.put(`http://localhost:5000/api/products/${id}`, formData, {
@@ -143,7 +179,7 @@ const EditProduct = () => {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
     })
-    .then(() => navigate("/"))
+    .then(() => navigate("/seller-profile/Dashboard"))
     .catch(err => console.error("Update failed", err));
   };
 
@@ -355,32 +391,27 @@ const EditProduct = () => {
             <Fade in timeout={500}>
               <Box>
               <Typography variant="h5" fontWeight="bold" mb={2}>Edit Product</Typography>
-              <TextField fullWidth label="Product Name" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 2 }} />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={6}>
-                    <TextField fullWidth label="Price (USD)" type="number" value={price} onChange={(e) => setPrice(e.target.value)} sx={{ mb: 2 }} />
-                  </Grid2>
-                  <Grid2 size={6}>
-                    <TextField fullWidth label="Stock Quantity" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} sx={{ mb: 2 }} />
-                  </Grid2>
-                </Grid2>
-              <Typography variant="caption" color="text.secondary">Note: 1 JOD = 1.3701710 USD ~ PayPal currency convert</Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                Price in JOD:&nbsp;
-                <Typography variant="subtitle1" color="error" sx={{ display: 'inline-block' }}>
-                  {Number(price / 1.3701710).toFixed(2)}
-                </Typography>
-                </Typography>
-              <TextField fullWidth label="Category" sx={{ mb: 3 }} value={category} onChange={(e) => setCategory(e.target.value)} select>
-                {categories.map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                    {cat}
-                    </MenuItem>
-                ))}
-              </TextField>
-              <TextField fullWidth label="Description" multiline rows={6} value={description} onChange={(e) => setDescription(e.target.value)} sx={{ mb: 2 }} />
               
-              <Typography variant="h6" mb={1}>Current Images</Typography>
+              <ProductDetailsForm
+                formData={formData} 
+                setFormData={setFormData} 
+              />
+
+              <Box sx={{ mb: 2 }}>
+                <ProductSpecsForm
+                  formData={formData} 
+                  setFormData={setFormData} 
+                />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <ProductPricingForm
+                  formData={formData} 
+                  setFormData={setFormData} 
+                />
+              </Box>
+
+              <Typography variant="h6" my={2}>Current Images</Typography>
               <Grid2 container spacing={2}>
                 {images.map((img, index) => (
                   <Grid2 item size={4} key={index}>

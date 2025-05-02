@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, Container } from "@mui/material";
+import AdminNavBar from "./components/AdminNav";
+import Footer from "./components/Footer";
 
-const UserManagement = () => {
+const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,16 +40,18 @@ const UserManagement = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80 },
-    { field: "email", headerName: "Email", width: 220 },
-    { field: "phone_number", headerName: "Phone", width: 150 },
-    { field: "user_type", headerName: "Type", width: 130 },
-    { field: "status", headerName: "Status", width: 120 },
-    { field: "created_at", headerName: "Joined", width: 180 },
+    { field: "id", headerName: "ID", width: 60 },
+    { field: "email", headerName: "Email" , width: 250},
+    { field: "phone_number", headerName: "Phone", width: 140 },
+    { field: "user_type", headerName: "Type", width: 90 },
+    { field: "status", headerName: "Status", width: 90 },
+    { field: "created_at", headerName: "Joined", type: "dateTime", width: 180,
+      valueFormatter: (params) => new Date(params).toISOString().slice(0, 10) + ' ' + new Date(params).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 130,
       renderCell: (params) => (
         <Button variant="contained" color="error" onClick={() => handleDeleteUser(params.row.id)}>
           Delete
@@ -57,11 +61,13 @@ const UserManagement = () => {
   ];
 
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
-      <Typography variant="h5" mb={1}>User Management</Typography>
-      <DataGrid rows={users} columns={columns} pageSize={5} loading={loading} disableSelectionOnClick />
-    </Box>
+    <AdminNavBar>
+      <Container maxWidth='xl' sx={{ minHeight: '53vh', p: 2 }}>
+        <DataGrid rows={users} columns={columns} pageSize={5} loading={loading} disableSelectionOnClick />
+      </Container>
+      <Footer />
+    </AdminNavBar>
   );
 };
 
-export default UserManagement;
+export default AdminUsers;

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Typography, Box, Button } from "@mui/material";
+import { Typography, Box, Button, Container } from "@mui/material";
+import AdminNavBar from "./components/AdminNav";
+import Footer from "./components/Footer";
 
-export const AdminDeliveryRequests = () => {
+const AdminDeliveryRequests = () => {
     const [requests, setRequests] = useState([]);
     useEffect(() => {
       axios
@@ -30,11 +32,14 @@ export const AdminDeliveryRequests = () => {
     };
   
     const columns = [
-      { field: "id", headerName: "ID", width: 90 },
-      { field: "email", headerName: "Email", width: 200 },
-      { field: "phone_number", headerName: "Phone", width: 150 },
+      { field: "id", headerName: "ID", width: 60 },
+      { field: "email", headerName: "Email", width: 250 },
+      { field: "phone_number", headerName: "Phone", width: 140 },
       { field: "vehicle_type", headerName: "Vehicle Type", width: 150 },
-      { field: "status", headerName: "Status", width: 150 },
+      { field: "status", headerName: "Status", width: 90 },
+      { field: "created_at", headerName: "Joined", type: "dateTime", width: 180,
+        valueFormatter: (params) => new Date(params).toISOString().slice(0, 10) + ' ' + new Date(params).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      },
       {
         field: "actions",
         headerName: "Actions",
@@ -43,11 +48,11 @@ export const AdminDeliveryRequests = () => {
           <>
           {params.row.status !== 'Active' ? (
             <>
-              <Button onClick={() => handleApproval(params.row.id)} color="success">Approve</Button>
-              <Button onClick={() => handleReject(params.row.id)} color="error">Reject</Button>
+              <Button onClick={() => handleApproval(params.row.id)} color="success" variant="contained">Approve</Button>
+              <Button onClick={() => handleReject(params.row.id)} color="error" variant="contained">Reject</Button>
             </>
           ):(
-            <Button onClick={() => handleReject(params.row.id)} color="error">Delete</Button>
+            <Button onClick={() => handleReject(params.row.id)} color="error" variant="contained">Delete</Button>
           )}
           </>
         ),
@@ -55,9 +60,13 @@ export const AdminDeliveryRequests = () => {
     ];
   
     return (
-      <Box sx={{ height: 400, width: "100%" }}>
-        <Typography variant="h5" mb={1}>Delivery Requests</Typography>
-        <DataGrid rows={requests} columns={columns} pageSize={5} />
-      </Box>
+      <AdminNavBar>
+        <Container maxWidth='xl' sx={{ minHeight: '53vh', p: 2 }}>
+            <DataGrid rows={requests} columns={columns} pageSize={5} />
+        </Container>
+        <Footer />
+      </AdminNavBar>
     );
   };
+
+export default AdminDeliveryRequests;

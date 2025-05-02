@@ -56,8 +56,7 @@ const ReviewForm = ({ photo, productId, onReviewSubmitted }) => {
     <Box 
       component="form" 
       onSubmit={handleSubmit}
-      sx={{ 
-        mt: 4,
+      sx={{
         p: 3,
         borderRadius: 2,
         bgcolor: 'background.paper',

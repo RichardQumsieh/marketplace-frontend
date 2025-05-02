@@ -1,8 +1,9 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import Orders from './Orders';
-import Users from './Users';
+import AdminDashboard from './AdminDashboard';
+import AdminDeliveryRequests from './AdminDeliveryPersonnel';
+import AdminOrders from './AdminOrders';
+import AdminUsers from './AdminUsers';
 import Signin from './Signin';
 import Signup from './Signup';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,7 +20,6 @@ import BuyerProfilePage from './BuyerProfile';
 import AdminSettings from './AdminSettings';
 import DeliverySignup from './DeliverySignup';
 import { DeliveryProfile } from './DeliveryProfile';
-import { AdminDeliveryRequests } from './DeliveryPersonnel';
 import DeliveryOrders from './DeliveryOrders';
 import Checkout from './Checkout';
 import About from './About';
@@ -158,19 +158,19 @@ const App = () => {
         />
 
         <Route
-          path="/dashboard"
+          path="/admin-control-panel/dashboard"
           element={
             <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
-              <Dashboard />
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/admin/orders"
+          path="/admin-control-panel/orders"
           element={
             <ProtectedRoute allowedUserTypes={['Admin', 'Seller']}>
-              <Orders />
+              <AdminOrders />
             </ProtectedRoute>
           }
         />
@@ -217,16 +217,16 @@ const App = () => {
         />
 
         <Route
-          path="/admin/users"
+          path="/admin-control-panel/users"
           element={
             <ProtectedRoute allowedUserTypes={['Admin']}>
-              <Users />
+              <AdminUsers />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/admin/delivery-personnel"
+          path="/admin-control-panel/delivery-personnel"
           element={
             <ProtectedRoute allowedUserTypes={['Admin']}>
               <AdminDeliveryRequests />
@@ -258,7 +258,7 @@ const App = () => {
         />
   
         <Route
-          path="/admin-settings"
+          path="/admin-control-panel/Settings"
           element={
             <ProtectedRoute allowedUserTypes={['Admin']}>
               <AdminSettings />

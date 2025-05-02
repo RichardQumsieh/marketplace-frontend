@@ -2,7 +2,7 @@ import { Avatar, Box, Typography, Rating, Divider } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 
 const FeaturedReviews = ({ reviews }) => (
-  <Box sx={{ mt: 1 }}>
+  <Box>
     {reviews?.map((review) => (
       <Box 
         key={review.id} 

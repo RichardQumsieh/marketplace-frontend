@@ -1,5 +1,5 @@
-import { Add, FilterList, Star, ViewList, ViewModule } from "@mui/icons-material";
-import { alpha, Box, Button, Card, CardContent, CardMedia, Chip, CircularProgress, Container, Grid2, Grow, IconButton, Link, MenuItem, Paper, Stack, TextField, ThemeProvider, Tooltip, Typography, useTheme, Zoom } from "@mui/material";
+import { Add, Delete, FilterList, MoreVert, Star, ViewList, ViewModule } from "@mui/icons-material"; // Add Delete and MoreVert icons
+import { alpha, Box, Button, Card, CardContent, CardMedia, Chip, CircularProgress, Container, Grid2, Grow, IconButton, Link, Menu, MenuItem, Paper, Stack, TextField, ThemeProvider, Tooltip, Typography, useTheme, Zoom } from "@mui/material"; // Add Menu and MenuItem
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SellerNav from "./components/SellerNav";
@@ -14,6 +14,8 @@ const SellerProducts = () => {
     const [products, setProducts] = useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [menuAnchor, setMenuAnchor] = useState(null); // State for menu anchor
+    const [selectedProduct, setSelectedProduct] = useState(null); // State for selected product
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +37,34 @@ const SellerProducts = () => {
         
         fetchData();
     }, []);
-    
+
+    const handleMenuOpen = (event, product) => {
+        setMenuAnchor(event.currentTarget);
+        setSelectedProduct(product);
+    };
+
+    const handleMenuClose = () => {
+        setMenuAnchor(null);
+        setSelectedProduct(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedProduct) {
+            try {
+                await axios.delete(`http://localhost:5000/api/products/${selectedProduct.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                setProducts(products.filter(product => product.id !== selectedProduct.id));
+            } catch (error) {
+                console.error('Error deleting product:', error);
+            } finally {
+                handleMenuClose();
+            }
+        }
+    };
+
     if (loading) {
         return (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -130,41 +159,47 @@ const SellerProducts = () => {
                             transition: 'transform 0.3s ease'
                         }
                       }}>
-                  {product.images[0] && (
+                        <IconButton
+                          sx={{ position: 'absolute', top: 8, right: 8 }}
+                          onClick={(e) => handleMenuOpen(e, product)}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                        {product.images && (
                           <Box sx={{ p: 1, bgcolor: 'rgba(0,0,0,0.2)' }}>
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={`data:image/jpeg;base64,${product.images[0].image}`}
-                        alt={product.name}
+                            <CardMedia
+                              component="img"
+                              height="200"
+                              image={`data:image/jpeg;base64,${product.images[0].image}`}
+                              alt={product.name}
                               sx={{
                                 objectFit: "contain",
                               }}
-                      />
+                            />
                           </Box>
-                  )}
+                        )}
                         <CardContent>
                           <Stack spacing={1}>
-                    <Tooltip title={product.name} arrow>
-                        <Link 
-                        href={`/edit-product/${product.id}`}
-                        sx={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            WebkitLineClamp: 2,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            color: 'text.primary',
-                            textDecoration: 'none',
-                            fontWeight: 500,
-                            '&:hover': {
-                            color: 'primary.main'
-                            }
-                        }}
-                        >
-                            {product.name}
-                        </Link>
-                    </Tooltip>
+                            <Tooltip title={product.name} arrow>
+                              <Link 
+                                href={`/edit-product/${product.id}`}
+                                sx={{
+                                    display: "-webkit-box",
+                                    WebkitBoxOrient: "vertical",
+                                    WebkitLineClamp: 2,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    color: 'text.primary',
+                                    textDecoration: 'none',
+                                    fontWeight: 500,
+                                    '&:hover': {
+                                    color: 'primary.main'
+                                    }
+                                }}
+                              >
+                                {product.name}
+                              </Link>
+                            </Tooltip>
                             <Typography 
                               sx={{
                                 fontWeight: 'bold',
@@ -192,12 +227,22 @@ const SellerProducts = () => {
                               )}
                             </Stack>
                           </Stack>
-                  </CardContent>
+                        </CardContent>
                       </Card>
                     </Grow>
+                  </Grid2>
+                ))}
               </Grid2>
-            ))}
-          </Grid2>
+              <Menu
+                anchorEl={menuAnchor}
+                open={Boolean(menuAnchor)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleDelete}>
+                  <Delete fontSize="small" color="error" sx={{ mr: 1 }} />
+                  Delete
+                </MenuItem>
+              </Menu>
             </>
           ) : (
             <Grow in timeout={500}>
@@ -208,27 +253,27 @@ const SellerProducts = () => {
               }}>
                 <Typography variant="h6" color="text.secondary" gutterBottom>
                   No products yet!
-        </Typography>
-        <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => { navigate('/add-product'); }}
-            sx={{
-            mt: 2,
-            background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
-            '&:hover': {
-                background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.secondary.dark} 90%)`
-            }
-            }}
-        >
-            Add Your First Product
-        </Button>
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={() => { navigate('/add-product'); }}
+                  sx={{
+                    mt: 2,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
+                    '&:hover': {
+                        background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.secondary.dark} 90%)`
+                    }
+                  }}
+                >
+                  Add Your First Product
+                </Button>
               </Paper>
             </Grow>
           )}
-      </Container>
-      <Footer />
-    </SellerNav>
+        </Container>
+        <Footer />
+      </SellerNav>
     );
 };
 

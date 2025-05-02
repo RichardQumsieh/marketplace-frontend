@@ -111,7 +111,9 @@ export default function MainLayout ({ children }) {
                                 &nbsp;Marketplace
                             </Box>
                         </Typography>
-                        <SearchNavbar />
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'center', width: '100%', maxWidth: 600, mx: 'auto' }} >
+                            <SearchNavbar />
+                        </Box>
 
                         {authToken ? (
                             <>
@@ -266,7 +268,10 @@ export default function MainLayout ({ children }) {
                             </IconButton>
                         </Grid2>
                     </Grid2>
-                    <Accordion variant="outlined">
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }} >
+                        <SearchNavbar />
+                    </Box>
+                    <Accordion variant="outlined" sx={{ mt: 2 }}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#48BFE3' }} />}>
                             <Typography sx={{ fontWeight: 500 }}>Products</Typography>
                         </AccordionSummary>

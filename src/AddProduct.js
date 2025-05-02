@@ -1,550 +1,245 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  TextField,
+import React, { useState } from 'react';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  Stepper, 
+  Step, 
+  StepLabel,
   Button,
-  Typography,
-  Grid2,
   Paper,
-  IconButton,
-  MenuItem,
-  Divider,
-  ThemeProvider,
-  createTheme,
-  Alert,
-  CssBaseline,
-  Link,
-  styled,
-  AppBar,
-  alpha,
-  CircularProgress,
-  Avatar,
-  Menu,
-  Fade,
-  Container
-} from "@mui/material";
-import { AddPhotoAlternate, Dashboard, Delete, Shop } from "@mui/icons-material";
-import axios from "axios";
-import { isAuthenticated } from "./utils/auth";
-import { useNavigate } from "react-router-dom";
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import LaunchIcon from '@mui/icons-material/Launch';
-import Footer from "./components/Footer";
+  Alert
+} from '@mui/material';
+import Footer from './components/Footer';
+import SellerNav from './components/SellerNav';
+import axios from 'axios';
+import ProductDetailsForm from './components/ProductForms/ProductDetailsForm';
+import ProductSpecsForm from './components/ProductForms/ProductSpecsForm';
+import ProductMediaForm from './components/ProductForms/ProductMediaForm';
+import ProductPricingForm from './components/ProductForms/ProductPricingForm';
 
-const GlassAppBar = styled(AppBar)(({ theme }) => ({
-  backdropFilter: 'blur(12px)',
-  backgroundColor: alpha(theme.palette.background.paper, 0.85),
-  borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-  boxShadow: theme.shadows[1],
-  transition: 'all 0.3s ease',
-  '&.scrolled': {
-    backgroundColor: alpha(theme.palette.background.paper, 0.95),
-    boxShadow: theme.shadows[4]
-  }
-}));
-
-const Image = styled("img")({
-  width: "100%",
-  height: "400px",
-  objectFit: "contain",
-  borderRadius: "10px",
-});
-
-const categories = ["Electronics", "Clothing", "Furniture", "Books", "Other"];
+const steps = ['Basic Info', 'Specifications', 'Media', 'Pricing'];
 
 const AddProduct = () => {
-  const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [seller, setSeller] = useState(null);
-  const [scrolled, setScrolled] = useState(false);
-  
-  const [anchorEl, setAnchorEl] = useState(null);
-  
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const [productDetails, setProductDetails] = useState({
-    name: "",
-    description: "",
-    price: "",
-    quantity: "",
-    category: "",
-    images: [],
+  const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    quantity_in_stock: '',
+    category: 'Electronics',
+    width_cm: '',
+    height_cm: '',
+    depth_cm: '',
+    weight_kg: '',
+    sku: '',
+    barcode: '',
+    condition: 'new',
+    is_digital: false,
+    requires_shipping: true,
+    tax_class: 'standard'
   });
+  const [images, setImages] = useState([]);
+  // const [createProduct, { isLoading, isError, isSuccess }] = useCreateProductMutation();
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
-  const sanitizeInput = (input) => {
-    return String(input).normalize("NFKD").replace(/[^\x00-\x7F]/g, "");
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductDetails({ ...productDetails, [name]: value });
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map((file) =>
-      Object.assign(file, { preview: URL.createObjectURL(file) })
-    );
-    setProductDetails({
-      ...productDetails,
-      images: [...productDetails.images, ...newImages],
-    });
-  };
-
-  const handleImageRemove = (index) => {
-    const updatedImages = productDetails.images.filter((_, i) => i !== index);
-    setProductDetails({ ...productDetails, images: updatedImages });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    const { name, description, price, quantity, category, images } = productDetails;
-
-    if (!name || !description || !price || !quantity || !category || !images) {
-      setError("Please fill in all fields and upload at least one image.");
-      return;
+  const validateForm = () => {
+    const requiredFields = ['name', 'description', 'price', 'quantity_in_stock', 'category'];
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === '') {
+        setValidationError(`Please fill in the ${field} field.`);
+        return false;
+      }
     }
+  
+    if (isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
+      setValidationError('Please enter a valid price.');
+      return false;
+    }
+  
+    if (isNaN(parseInt(formData.quantity_in_stock)) || parseInt(formData.quantity_in_stock) < 0) {
+      setValidationError('Please enter a valid quantity in stock.');
+      return false;
+    }
+  
+    setValidationError('');
+    return true;
+  };
 
-    const data = new FormData();
-    data.append("name", name);
-    data.append("description", sanitizeInput(description));
-    data.append("price", price);
-    data.append("quantity_in_stock", quantity);
-    data.append("category", category);
-    for (let i = 0; i < images.length; i++) {
-      data.append("images", images[i]);
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/products", data, {
+      setLoading(true);
+      setError(false);
+
+      const Data = new FormData();
+
+      Data.append('name', formData.name);
+      Data.append('description', formData.description);
+      Data.append('price', parseFloat(formData.price));
+      Data.append('quantity_in_stock', Number(formData.quantity_in_stock).toFixed(0));
+      Data.append('sku', formData.sku);
+      Data.append('barcode', formData.barcode);
+      Data.append('category', formData.category);
+      Data.append('width_cm', formData.width_cm ? parseFloat(formData.width_cm) : '');
+      Data.append('height_cm', formData.height_cm ? parseFloat(formData.height_cm) : '');
+      Data.append('depth_cm', formData.depth_cm ? parseFloat(formData.depth_cm) : '');
+      Data.append('weight_kg', formData.weight_kg ? parseFloat(formData.weight_kg) : '');
+      Data.append('condition', formData.condition);
+      Data.append('is_digital', formData.is_digital);
+      Data.append('requires_shipping', formData.requires_shipping);
+      Data.append('tax_class', formData.tax_class);
+
+      // Append images to FormData
+      images.forEach((image, index) => {
+        Data.append('images', image); // 'images' is the field name multer will look for
+      });
+
+      // Send the FormData object via axios
+      await axios.post("http://localhost:5000/api/products", Data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
-      if (response.status === 201) {
-        alert("Product added successfully!");
-        setProductDetails({
-          name: "",
-          description: "",
-          price: "",
-          quantity: "",
-          category: "",
-          images: [],
-        });
-      }
+      setLoading(false);
+      setSuccess(true);
     } catch (err) {
-      console.error(err);
-      setError("Failed to add the product. Please try again.");
+      console.error('Failed to create product:', err);
+      setError(err.message);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchSellerDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/seller/basic`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include token
-          },
-        });
-        setSeller(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError(err.response?.data?.message || 'Failed to fetch seller details');
-        setLoading(false);
-      }
-    };
-
-    fetchSellerDetails();
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  },[]);
-
-  const theme = createTheme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        main: '#1976d2', // A more professional blue
-      },
-      background: {
-        default: '#121212', // Dark background
-        paper: '#1e1e1e', // Slightly lighter for cards and papers
-      },
-      text: {
-        primary: '#ffffff', // White text
-        secondary: '#b3b3b3', // Light grey for secondary text
-      },
-    },
-    typography: {
-      allVariants: {
-        fontFamily: '"Lora", serif', // Default for body
-      },
-      h3: {
-        fontFamily: '"Playfair Display", serif',
-        fontWeight: 600,
-        color: 'white'
-      },
-      h5: {
-        fontFamily: '"Playfair Display", serif',
-        fontWeight: 500,
-        color: 'white'
-      },
-    },
-  });
-
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('id');
-    localStorage.removeItem('email');
-    localStorage.removeItem('type');
-    window.location.href = '/sign-in';
+  const renderStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <ProductDetailsForm
+            formData={formData} 
+            setFormData={setFormData} 
+          />
+        );
+      case 1:
+        return (
+          <ProductSpecsForm
+            formData={formData} 
+            setFormData={setFormData} 
+          />
+        );
+      case 2:
+        return (
+          <ProductMediaForm 
+            images={images} 
+            setImages={setImages} 
+          />
+        );
+      case 3:
+        return (
+          <ProductPricingForm 
+            formData={formData} 
+            setFormData={setFormData} 
+          />
+        );
+      default:
+        return null;
+    }
   };
 
-  if (loading) return (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      bgcolor: 'black'
-    }}>
-      <CircularProgress sx={{ color: theme.palette.primary.main }} />
-    </Box>
-  );
-
-  if (isAuthenticated())
   return (
-    <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{
-          minHeight: '100vh',
-          background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`
-        }}>
-        
-        <GlassAppBar 
-          position="sticky"
-          className={scrolled ? 'scrolled' : ''}
-          sx={{
-            zIndex: theme.zIndex.drawer - 1,
-          }}
-        >
-          <Box sx={{ 
-            maxWidth: 1280, 
-            mx: 'auto',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            px: { xs: 2, sm: 4 }
-          }}>
-                <Typography variant="h6" sx={{ 
-                  fontWeight: 700,
-                  background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  GoPrime
-                </Typography>
-                
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  gap: 2
-                }}>
-                  
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center',
-                    gap: 1,
-                    ml: 2
-                  }}>
-                    <Typography 
-                      variant="subtitle1" 
-                      sx={{ 
-                        color: 'text.secondary',
-                        fontWeight: 500
-                      }}
-                    >
-                      {seller?.store_name}
-                    </Typography>
-                    
-                    <IconButton 
-                      onClick={handleMenuOpen} 
-                      sx={{
-                        my: 0.5,
-                        p: 0.5,
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                        '&:hover': {
-                          borderColor: 'primary.light',
-                          transform: 'scale(1.05)',
-                          transition: 'all 0.2s ease'
-                        }
-                      }}
-                    >
-                      <Avatar 
-                        src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
-                        alt="User Avatar"
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          bgcolor: 'primary.main',
-                        }}
-                      />
-                    </IconButton>
-                    
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                      slotProps={{ paper: {
-                        mt: 1.5,
-                        minWidth: 180,
-                        borderRadius: 2,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-                        '& .MuiMenuItem-root': {
-                          px: 2,
-                          py: 1.5,
-                          '&:hover': {
-                            bgcolor: 'rgba(144, 202, 249, 0.08)'
-                          }
-                        },
-                        }}}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          navigate('/seller-profile/Dashboard');
-                          handleMenuClose();
-                        }}
-                      >
-                        <Dashboard fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-                        Dashboard
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          navigate('/seller-profile/Products');
-                          handleMenuClose();
-                        }}
-                      >
-                        <Shop fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-                        Products
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          navigate('/seller-profile/Settings');
-                          handleMenuClose();
-                        }}
-                      >
-                        <SettingsIcon fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-                        Settings
-                      </MenuItem>
-                      <MenuItem onClick={handleLogout}>
-                        <LogoutIcon fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
-                        Logout
-                      </MenuItem>
-                    </Menu>
-                  </Box>
-                </Box>
-          </Box>
-        </GlassAppBar>
+    <SellerNav>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+            Add New Product
+          </Typography>
+          
+          <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
 
-        <Box sx={{ py: 2 }}>
-          <Container maxWidth='xl'>
-            <Fade in timeout={500}>
-              <Box>
-                <Box>
-                  {error && (
-                    <Typography>
-                        <Alert color="error">{error}</Alert>
-                    </Typography>
-                  )}
-                  <Paper
-                      elevation={3}
-                      sx={{
-                      p: 4,
-                      mt: 2,
-                      borderRadius: 3,
-                      }}
-                  >
-                      <TextField
-                      label="Product Name"
-                      name="name"
-                      value={productDetails.name}
-                      onChange={handleInputChange}
-                      fullWidth
-                      margin="normal"
-                      required
-                      />
-                      <TextField
-                      label="Description"
-                      name="description"
-                      value={productDetails.description}
-                      onChange={handleInputChange}
-                      fullWidth
-                      margin="normal"
-                      multiline
-                      rows={4}
-                      required
-                      />
-          
-                      <Grid2 container spacing={2} sx={{ mb: 2 }}>
-                        <Grid2 item size={6}>
-                            <TextField
-                            label="Price (USD)"
-                            name="price"
-                            type="number"
-                            value={productDetails.price}
-                            onChange={handleInputChange}
-                            fullWidth
-                            required
-                            />
-                        </Grid2>
-                        <Grid2 item size={6}>
-                            <TextField
-                            label="Quantity in Stock"
-                            name="quantity"
-                            type="number"
-                            value={productDetails.quantity}
-                            onChange={handleInputChange}
-                            fullWidth
-                            required
-                            />
-                        </Grid2>
-                      </Grid2>
-                      
-                      <Typography variant="caption" color="text.secondary">
-                        Price after applying fees (JOD): <Link href="#" target="blank" rel="noopener">read more here <LaunchIcon fontSize="10px" sx={{ verticalAlign: 'middle' }}/></Link>
-                        <Typography color="error">
-                          {Number(productDetails.price / 1.3701710 - productDetails.price / 1.3701710 * 0.065).toFixed(2)} JOD
-                        </Typography>
-                      </Typography>
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              Failed to create product. Please try again.
+            </Alert>
+          )}
 
-                      <TextField
-                      label="Category"
-                      name="category"
-                      value={productDetails.category}
-                      onChange={handleInputChange}
-                      select
-                      fullWidth
-                      margin="normal"
-                      required
-                      >
-                      {categories.map((cat) => (
-                          <MenuItem key={cat} value={cat}>
-                          {cat}
-                          </MenuItem>
-                      ))}
-                      </TextField>
-          
-                      <Divider sx={{ my: 3 }} />
-          
-                      <Box
-                      sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          p: 2,
-                          border: "2px dashed #ccc",
-                          borderRadius: 2,
-                      }}
-                      >
-                      <Typography variant="body1" gutterBottom>
-                          Upload Product Images
-                      </Typography>
-                      <Button
-                          variant="contained"
-                          component="label"
-                          startIcon={<AddPhotoAlternate />}
-                      >
-                          Upload Images
-                          <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          hidden
-                          onChange={handleImageUpload}
-                          required
-                          />
-                      </Button>
-          
-                      <Grid2 container spacing={2} sx={{ mt: 2 }}>
-                          {productDetails.images[0] && productDetails.images.map((image, index) => (
-                          <Grid2 item key={index} size = {{ xs: 12, sm: 6 }}>
-                              <Box
-                              sx={{
-                                  position: "relative",
-                                  width: "100%",
-                                  height: 150,
-                                  overflow: "hidden",
-                                  borderRadius: 2,
-                                  boxShadow: 2,
-                              }}
-                              >
-                              <img
-                                  src={image.preview}
-                                  alt={`preview-${index}`}
-                                  style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                  }}
-                              />
-                              <IconButton
-                                  sx={{
-                                  position: "absolute",
-                                  top: 5,
-                                  right: 5,
-                                  background: "rgba(255,255,255,0.7)",
-                                  }}
-                                  onClick={() => handleImageRemove(index)}
-                              >
-                                  <Delete />
-                              </IconButton>
-                              </Box>
-                          </Grid2>
-                          ))}
-                      </Grid2>
-                      </Box>
-          
-                      <Button
-                      variant="contained"
-                      color="primary"
-                      sx={{ mt: 3 }}
-                      onClick={handleSubmit}
-                      fullWidth
-                      >
-                      Submit Product
-                      </Button>
-                  </Paper>
-                  </Box>
+          {validationError && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {validationError}
+            </Alert>
+          )}
+
+          {success ? (
+            <Box textAlign="center" py={6}>
+              <Typography variant="h5" color="success.main" gutterBottom>
+                Product Created Successfully!
+              </Typography>
+              <Button 
+                variant="contained" 
+                href="/seller/products"
+                sx={{ mt: 2 }}
+              >
+                View Products
+              </Button>
             </Box>
-          </Fade>
-        </Container>
-      </Box>
-    </Box>
-    <Footer />
-    </ThemeProvider>
+          ) : (
+            <>
+              {renderStepContent(activeStep)}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  variant="outlined"
+                >
+                  Back
+                </Button>
+                
+                {activeStep === steps.length - 1 ? (
+                  <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    {loading ? 'Creating...' : 'Create Product'}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </Button>
+                )}
+              </Box>
+            </>
+          )}
+        </Paper>
+      </Container>
+      <Footer />
+    </SellerNav>
   );
-  else return navigate('/sign-in');
 };
 
 export default AddProduct;

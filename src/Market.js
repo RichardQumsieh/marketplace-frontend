@@ -5,6 +5,7 @@ import axios from "axios";
 import MainLayout from "./components/MainLayout";
 import Footer from "./components/Footer";
 import { userPrevilegeCheck } from "./utils/abstraction";
+import SafeHTML from "./components/SafeHTML";
 
 export default function Marketplace() {
   const theme = createTheme({
@@ -157,7 +158,7 @@ export default function Marketplace() {
                       animationFillMode: 'both',
                     }}
                   >
-                    {item.description}
+                    <SafeHTML html={(item.description)} />
                   </Typography>
                 </Box>
               </Paper>

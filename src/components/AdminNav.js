@@ -5,10 +5,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function SellerNav({children}) {
+export default function AdminNavBar({children}) {
     const navigate = useNavigate();
     const pathname = String(useLocation().pathname).toLocaleLowerCase();
-    const [seller, setSeller] = useState(null);
+    const [admin, setAdmin] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const [scrolled, setScrolled] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -34,20 +34,20 @@ export default function SellerNav({children}) {
     };
     
     useEffect(() => {
-        const fetchSellerDetails = async () => {
+        const fetchAdminDetails = async () => {
           try {
-            const response = await axios.get(`http://localhost:5000/api/seller/basic`, {
+            const response = await axios.get(`http://localhost:5000/api/user/isAuthenticated`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include token
               },
             });
-            setSeller(response.data);
+            setAdmin(response.data.user);
           } catch (err) {
             console.error(err);
           }
         };
     
-        fetchSellerDetails();
+        fetchAdminDetails();
         const handleScroll = () => {
             setScrolled(window.scrollY > 10);
         };
@@ -91,7 +91,7 @@ export default function SellerNav({children}) {
     
     const tabs = (
         <Tabs
-            value={pathname.includes('dashboard') ? 0 : pathname.includes('products') ? 1 : pathname.includes('settings') ? 2 : null}
+            value={pathname.includes('dashboard') ? 0 : pathname.includes('users') ? 1 : pathname.includes('orders') ? 2 : pathname.includes('delivery') ? 3 : null}
             onChange={handleTabChange}
             orientation={isMobile ? 'vertical' : 'horizontal'}
             variant={isMobile ? 'fullWidth' : 'scrollable'}
@@ -117,9 +117,10 @@ export default function SellerNav({children}) {
                 }
             }}
         >
-            <Tab label="Dashboard" icon={<Analytics />} iconPosition="start" onClick={()=>{navigate('/seller-profile/Dashboard');}}/>
-            <Tab label="Products" icon={<Inventory />} iconPosition="start" onClick={()=>{navigate('/seller-profile/Products');}}/>
-            <Tab label="Settings" icon={<Settings />} iconPosition="start" onClick={()=>{navigate('/seller-profile/Settings');}}/>
+            <Tab label="Dashboard" icon={<Analytics />} iconPosition="start" onClick={()=>{navigate('/admin-control-panel/dashboard');}}/>
+            <Tab label="Users" icon={<Inventory />} iconPosition="start" onClick={()=>{navigate('/admin-control-panel/users');}}/>
+            <Tab label="Orders" icon={<Settings />} iconPosition="start" onClick={()=>{navigate('/admin-control-panel/orders');}}/>
+            <Tab label="Delivery Personnel" icon={<Settings />} iconPosition="start" onClick={()=>{navigate('/admin-control-panel/delivery-Personnel');}}/>
         </Tabs>
     );
 
@@ -176,48 +177,47 @@ export default function SellerNav({children}) {
               backgroundColor: alpha(theme.palette.background.paper, 0.95),
               boxShadow: theme.shadows[4]
             },
-            zIndex: theme.zIndex.drawer - 1,
-            minHeight: 45
+            zIndex: theme.zIndex.drawer - 1
           }}
         >
             {isMobile ? (
               <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between', // Ensures left and right alignment
-                  width: '100%',
-                  px: { xs: 2, sm: 4 },
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconButton
-                    edge="start"
-                    onClick={() => setDrawerOpen(true)}
-                    sx={{ mr: 1 }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 700,
-                    }}
-                  >
-                    GoPrime
-                  </Typography>
-                </Box>
-              
-                <Avatar 
-                  src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
-                  alt="User Avatar"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between', // Ensures left and right alignment
+                width: '100%',
+                px: { xs: 2, sm: 4 },
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <IconButton
+                  edge="start"
+                  onClick={() => setDrawerOpen(true)}
+                  sx={{ mr: 1 }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography
+                  variant="h6"
                   sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: 'primary.main'
+                    fontWeight: 700,
                   }}
-                />
+                >
+                  GoPrime
+                </Typography>
               </Box>
+            
+              <Avatar
+                src={`data:image/jpeg;base64,${admin?.encode}` || ''}
+                alt="User Avatar"
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: 'primary.main',
+                }}
+              />
+            </Box>
             ) : (
               <Box sx={{ 
                 maxWidth: 1280, 
@@ -254,7 +254,7 @@ export default function SellerNav({children}) {
                         fontWeight: 500
                       }}
                     >
-                      {seller?.store_name}
+                      {admin?.email}
                     </Typography>
                     
                     <IconButton 
@@ -271,9 +271,9 @@ export default function SellerNav({children}) {
                       }}
                     >
                       <Avatar 
-                        src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
+                        src={`data:image/jpeg;base64,${admin?.encode}` || ''} 
                         alt="User Avatar"
-                        sx={{
+        sx={{
                           width: 32,
                           height: 32,
                           bgcolor: 'primary.main'
@@ -296,9 +296,13 @@ export default function SellerNav({children}) {
                           '&:hover': {
                             bgcolor: 'rgba(144, 202, 249, 0.08)'
                           }
-                        },
+                        }
                         }}}
                     >
+                      <MenuItem onClick={()=>{navigate('/admin-control-panel/Settings')}}>
+                        <Settings fontSize="small" color="primary" sx={{ mr: 1 }} />
+                        Settings
+                      </MenuItem>
                       <MenuItem onClick={handleLogout}>
                         <Logout fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
                         Logout
