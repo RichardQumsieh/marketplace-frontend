@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
@@ -7,21 +7,22 @@ import {
   Grid2,
   Button,
   Paper,
-  TextField,
   ThemeProvider,
   createTheme,
   Link,
-  Rating,
   Table,
   TableBody,
   TableRow,
   TableCell,
   Divider,
+  Tooltip,
+  CardContent,
+  CardMedia,
+  Card,
+  Rating,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import Carousel from "react-material-ui-carousel";
-import LaunchIcon from '@mui/icons-material/Launch';
-import EditIcon from '@mui/icons-material/Edit';
 import axios from "axios";
 import Footer from "./components/Footer";
 import FeaturedReviews from "./components/FeaturedReviews";
@@ -67,15 +68,38 @@ const ViewProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState(null);
-  const [quantityForBuyer, setQuantityForBuyer] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [relatedPage, setRelatedPage] = useState(1);
+  const [hasMoreRelated, setHasMoreRelated] = useState(true);
   
   const fetchReviews = async () => {
     const res = await fetch(`http://localhost:5000/api/products/${id}/reviews`);
     const data = await res.json();
     setReviews(data);
   };
+
+  const fetchRelatedProducts = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/products/${id}/related?page=${relatedPage}&limit=10`
+      );
+      if (!response.ok) throw new Error("Failed to fetch related products");
+      const data = await response.json();
+
+      setRelatedProducts((prev) => {
+        // Filter out duplicates by checking product IDs
+        const existingIds = new Set(prev.map((product) => product.id));
+        const newProducts = data.filter((product) => !existingIds.has(product.id));
+        return [...prev, ...newProducts];
+      });
+
+      if (data.length < 10) setHasMoreRelated(false); // No more products to load
+    } catch (err) {
+      console.error("Error fetching related products:", err);
+    }
+  }, [id, relatedPage]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -93,7 +117,8 @@ const ViewProduct = () => {
 
     fetchProduct();
     fetchReviews();
-  }, [id]);
+    fetchRelatedProducts();
+  }, [id, fetchRelatedProducts]);
 
   const addToCart = async (productId, quantity) => {
     try {
@@ -109,15 +134,6 @@ const ViewProduct = () => {
         console.error("Failed to add to cart:", error);
     }
   };
-
-  // const formatDescription = (text) => {
-  //   if (!text) return '';
-  //   return text.split('\n').map((line, index) => (
-  //     <div key={index} style={{ marginBottom: '8px' }}>
-  //       • {line}
-  //     </div>
-  //   ));
-  // };
 
   if (loading)
     return (
@@ -281,6 +297,151 @@ const ViewProduct = () => {
           </Box>
         </Grid2>
       </Grid2>
+
+      <Divider sx={{ my: 2 }} />
+
+      <Box sx={{ px: 2 }}>
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+          Related Products
+        </Typography>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(1, 1fr)", // 1 column on extra-small screens
+              sm: "repeat(2, 1fr)", // 2 columns on small screens
+              md: "repeat(3, 1fr)", // 3 columns on medium screens
+              lg: "repeat(4, 1fr)", // 4 columns on large screens
+            },
+            gap: 2, // Space between cards
+            paddingBottom: 2,
+          }}
+        >
+          {relatedProducts.map((product) => (
+            <Card 
+              sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: 'translateY(0)',
+                animation: 'fadeInUp 0.5s ease-out',
+                '@keyframes fadeInUp': {
+                  '0%': { opacity: 0, transform: 'translateY(20px)' },
+                  '100%': { opacity: 1, transform: 'translateY(0)' }
+                },
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                  '& .MuiCardMedia-root': {
+                    transform: 'scale(1.05)',
+                  }
+                }
+              }}
+            >
+              <Grid2 container sx={{ px: 1, py: 0.5 }}>
+                <Grid2 item size={6} textAlign="left">
+                  <Typography variant="body2" color="text.secondary" sx={{ px: 1, py: 0.5 }}>
+                    Sold by <Link href={`/profile/${product?.store_name}`} underline="hover" color="primary">{product.store_name}</Link>
+                  </Typography>
+                </Grid2>
+                <Grid2 item size={6} textAlign="right">
+                  <Typography variant="caption" color="text.secondary" sx={{ px: 1, py: 0.5 }}>
+                    {(product.verification_status === "Pending") ? "Not Yet Verified" : "Verified Seller ✅"}
+                  </Typography>
+                </Grid2>
+              </Grid2>
+              <CardMedia
+                component="img"
+                height="200"
+                sx={{
+                  my: 1,
+                  px: 1,
+                  objectFit: "contain",
+                  borderRadius: '8px',
+                  transition: 'transform 0.3s ease-in-out',
+                }}
+                image={`data:image/jpeg;base64,${product.image}`}
+                alt={product.name}
+              />
+              <CardContent>
+                <Tooltip title={product.name} arrow>
+                  <Link
+                    href={"/product/" + product.id}
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100%",
+                      color: "rgb(143, 143, 255)",
+                      textDecoration: 'none',
+                      fontWeight: 'bold',
+                      transition: 'color 0.3s ease',
+                      '&:hover': {
+                        color: "rgb(173, 173, 255)",
+                      }
+                    }}
+                  >
+                    {product.name}
+                  </Link>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{
+                      my: 1,
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                </Tooltip>
+                <Grid2 container sx={{ mb: 1 }}>
+                  <Grid2 item size={6} textAlign="left">
+                    <Typography variant="body2" color="text.secondary">
+                      Category: <Typography variant="body2" color="info" display={'inline'}>{product.category}</Typography>
+                    </Typography>
+                  </Grid2>
+                  <Grid2 item size={6} textAlign="right">
+                    <Typography variant="body2" color="text.secondary">
+                      {product.quantity_in_stock} in stock
+                    </Typography>
+                  </Grid2>
+                </Grid2>
+                <Grid2 container sx={{ mb: 1 }}>
+                    <Grid2 item size={6} textAlign="left">
+                      <Typography 
+                        variant="body2" 
+                        color="warning"
+                        sx={{
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {Number(product.price / 1.3701710).toFixed(2)} JOD
+                      </Typography>
+                    </Grid2>
+                    <Grid2 item size={6} textAlign="right">
+                      {(product.average_rating == 0) ? (
+                        <Typography variant="caption">Be the first to review 🎈</Typography>
+                      ) : (
+                        <Rating size="small" value={product.average_rating} />
+                      )}
+                    </Grid2>
+                </Grid2>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Box>
+
       <Footer />
     </ThemeProvider>
   );
