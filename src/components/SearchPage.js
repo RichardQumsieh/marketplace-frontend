@@ -63,7 +63,7 @@ const SearchNavbar = () => {
   return (
     <>
         <CssBaseline />
-        <Box sx={{ position: 'relative', width: {xs: 200, sm: '100%'}, maxWidth: 600 }}>
+        <Box sx={{ position: 'relative', width: '100%' }}>
         <Paper
             elevation={0}
             sx={{

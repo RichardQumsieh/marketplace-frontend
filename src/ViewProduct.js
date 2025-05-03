@@ -211,7 +211,7 @@ const ViewProduct = () => {
       <Divider sx={{ my: 2 }} />
 
       <Grid2 container spacing={2} sx={{ mt: 2 }}>
-        <Grid2 item size={{ xs: 12, sm: 6 }} sx={{ pl: { xs: 0, sm: 2 } }}>
+        <Grid2 item size={{ xs: 12, sm: 6 }} sx={{ pr: { xs: 2, sm: 0 }, pl: 2 }}>
           <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
             Additional Information
           </Typography>
@@ -261,9 +261,9 @@ const ViewProduct = () => {
           </Table>
         </Grid2>
 
-        <Grid2 item size={{ xs: 12, sm: 6 }} sx={{ borderLeft: { xs: 0, sm: '1px solid rgba(255, 255, 255, 0.1)' }, pl: { xs: 0, sm: 2 } }}>
+        <Grid2 item size={{ xs: 12, sm: 6 }} sx={{ borderLeft: { xs: 0, sm: '1px solid rgba(255, 255, 255, 0.1)' }, pr: 2, pl: 2 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>Reviews</Typography>
-          <Box sx={{ pr: 2 }}>
+          <Box>
             <FeaturedReviews reviews={reviews} />
             
             {product?.review_count > 3 && (

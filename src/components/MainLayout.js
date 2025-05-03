@@ -15,7 +15,6 @@ export default function MainLayout ({ children }) {
     const navigate = useNavigate();
     const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || null);
     const [email, setEmail] = useState(null);
-    const [type, setType] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -48,8 +47,6 @@ export default function MainLayout ({ children }) {
                 });
                 if (!response.data.user.email) throw Error;
                 setEmail(response.data.user.email);
-                setType(response.data.user.user_type);
-                localStorage.setItem('type', response.data.user.user_type);
                 if (response.data.user.encode) setProfilePhoto(`data:image/jpeg;base64,${response.data.user.encode}`);
             } catch (error) {
                 localStorage.removeItem('authToken');
@@ -155,7 +152,7 @@ export default function MainLayout ({ children }) {
                                     }
                                     }}
                                 >
-                                    <Tooltip title={email} arrow>
+                                    <Tooltip title={email} arrow placement="left">
                                         <MenuItem sx={{ cursor: 'default' }}>
                                             <Typography noWrap sx={{
                                                 maxWidth: 140,
@@ -164,53 +161,14 @@ export default function MainLayout ({ children }) {
                                             }}> {email} </Typography>
                                         </MenuItem>
                                     </Tooltip>
-                                    {(type === "Seller") && (
-                                        <>
-                                            <MenuItem
-                                                onClick={() => {
-                                                navigate('/seller-settings');
-                                                handleMenuClose();
-                                                }}
-                                            >
-                                                <SettingsIcon fontSize="small" sx={{ mr: 1 }} />
-                                                Go href Settings
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={() => {
-                                                navigate('/seller-profile');
-                                                handleMenuClose();
-                                                }}
-                                            >
-                                                <StoreIcon fontSize="small" sx={{ mr: 1 }} />
-                                                Profile
-                                            </MenuItem>
-                                        </>
-                                    )}
-                                    {(type === 'Buyer') && (
-                                        <>
-                                            <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
-                                                <AccountCircleIcon fontSize="small" sx={{ mr: 1 }} />
-                                                Profile
-                                            </MenuItem>
-                                            <MenuItem onClick={() => { navigate('/cart'); handleMenuClose(); }}>
-                                                <ShoppingCartIcon fontSize="small" sx={{ mr: 1 }} />
-                                                Cart
-                                            </MenuItem>
-                                        </>
-                                    )}
-                                    {(type === "Admin") && (
-                                      <>
-                                        <MenuItem
-                                            onClick={() => {
-                                            navigate('/admin-settings');
-                                            handleMenuClose();
-                                            }}
-                                        >
-                                            <SettingsIcon fontSize="small" sx={{ mr: 1 }} />
-                                            Go href Settings
-                                        </MenuItem>
-                                      </>
-                                    )}
+                                    <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
+                                        <AccountCircleIcon fontSize="small" sx={{ mr: 1 }} />
+                                        Profile
+                                    </MenuItem>
+                                    <MenuItem onClick={() => { navigate('/cart'); handleMenuClose(); }}>
+                                        <ShoppingCartIcon fontSize="small" sx={{ mr: 1 }} />
+                                        Cart
+                                    </MenuItem>
                                     <MenuItem onClick={handleLogout}>
                                         <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
                                         Logout
@@ -268,7 +226,7 @@ export default function MainLayout ({ children }) {
                             </IconButton>
                         </Grid2>
                     </Grid2>
-                    <Box sx={{ display: { xs: 'block', md: 'none' } }} >
+                    <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', width: '100%', mx: 'auto' }} >
                         <SearchNavbar />
                     </Box>
                     <Accordion variant="outlined" sx={{ mt: 2 }}>
