@@ -7,7 +7,8 @@ import {
   ThemeProvider,
   createTheme,
   Link,
-  Tooltip
+  Tooltip,
+  TextField, Button
 } from "@mui/material";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { formatDistanceToNow } from 'date-fns';
@@ -18,6 +19,9 @@ export default function SellerProfile() {
   const { store_name } = useParams();
   const [seller, setSeller] = useState(null);
   const [products, setProducts] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [ratingSuccess, setRatingSuccess] = useState(false);
 
   const theme = createTheme({
     palette: {
@@ -44,6 +48,23 @@ export default function SellerProfile() {
       .then(res => setProducts(res.data.products))
       .catch(() => setProducts([]));
   }, [store_name]);
+
+  const handleRatingSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/seller/${seller.id}/ratings`,
+        { rating, review },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` } }
+      );
+      if (response.status === 201) {
+        setRatingSuccess(true);
+        setRating(0);
+        setReview("");
+      }
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    }
+  };
 
   if (!seller) return (
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -90,7 +111,7 @@ export default function SellerProfile() {
                     <Typography 
                         variant="body2" 
                         sx={{ 
-                        color: seller.verification_status === 'Verified' ? 
+                        color: seller.verification_status !== 'Pending' ? 
                                 'success.light' : 'text.secondary',
                         display: 'flex',
                         alignItems: 'center',
@@ -98,7 +119,7 @@ export default function SellerProfile() {
                         }}
                     >
                         Verification:&nbsp;
-                        {seller.verification_status === 'Verified' && (
+                        {seller.verification_status !== 'Pending' && (
                         <VerifiedIcon fontSize="small" color="success" />
                         )}
                         {seller.verification_status}
@@ -176,6 +197,38 @@ export default function SellerProfile() {
             </Grid2>
             ))}
         </Grid2>
+
+        {/* Add Seller Rating Section */}
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" gutterBottom>Rate the Seller</Typography>
+        {ratingSuccess && (
+          <Typography color="success.main" sx={{ mb: 2 }}>
+            Thank you for your feedback!
+          </Typography>
+        )}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Rating
+            value={rating}
+            onChange={(event, newValue) => setRating(newValue)}
+            precision={0.5}
+          />
+          <TextField
+            label="Write a review"
+            multiline
+            rows={4}
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            variant="outlined"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleRatingSubmit}
+            disabled={rating === 0 || !review.trim()}
+          >
+            Submit Rating
+          </Button>
+        </Box>
         </Box>
         <Footer />
     </ThemeProvider>
