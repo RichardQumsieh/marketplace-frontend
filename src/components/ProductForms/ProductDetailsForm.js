@@ -11,7 +11,7 @@ import {
   } from '@mui/material';
   import RichTextEditor from './RichTextEditor';
   
-const categories = ["Electronics", "Clothing", "Furniture", "Books", "Other"];
+const categories = ["Electronics", "Clothing", "Furniture", "Books", "Home-Furnish", "Other"];
 
   const ProductDetailsForm = ({ formData, setFormData }) => {
     const handleChange = (e) => {

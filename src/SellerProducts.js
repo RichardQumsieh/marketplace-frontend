@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SellerNav from "./components/SellerNav";
 import axios from "axios";
 import Footer from "./components/Footer";
+import ConfirmationDrawer from "./components/ConfirmationDrawer"; // Import ConfirmationDrawer
 
 const SellerProducts = () => {
     const theme = useTheme();
@@ -16,6 +17,7 @@ const SellerProducts = () => {
     const [loading, setLoading] = useState(true);
     const [menuAnchor, setMenuAnchor] = useState(null); // State for menu anchor
     const [selectedProduct, setSelectedProduct] = useState(null); // State for selected product
+    const [confirmationOpen, setConfirmationOpen] = useState(false); // State for ConfirmationDrawer
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,7 +50,12 @@ const SellerProducts = () => {
         setSelectedProduct(null);
     };
 
-    const handleDelete = async () => {
+    const handleDeleteClick = () => {
+        handleMenuClose(); // Close the menu first
+        setConfirmationOpen(true); // Open the confirmation drawer
+    };
+
+    const handleConfirmDelete = async () => {
         if (selectedProduct) {
             try {
                 await axios.delete(`http://localhost:5000/api/products/${selectedProduct.id}`, {
@@ -60,6 +67,7 @@ const SellerProducts = () => {
             } catch (error) {
                 console.error('Error deleting product:', error);
             } finally {
+                setConfirmationOpen(false); // Close the confirmation drawer
                 handleMenuClose();
             }
         }
@@ -160,7 +168,7 @@ const SellerProducts = () => {
                         }
                       }}>
                         <IconButton
-                          sx={{ position: 'absolute', top: 8, right: 8 }}
+                          sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
                           onClick={(e) => handleMenuOpen(e, product)}
                         >
                           <MoreVert />
@@ -238,11 +246,21 @@ const SellerProducts = () => {
                 open={Boolean(menuAnchor)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={handleDelete}>
+                <MenuItem onClick={handleDeleteClick}>
                   <Delete fontSize="small" color="error" sx={{ mr: 1 }} />
                   Delete
                 </MenuItem>
               </Menu>
+
+              {/* ConfirmationDrawer for delete confirmation */}
+              <ConfirmationDrawer
+                open={confirmationOpen}
+                onClose={() => setConfirmationOpen(false)}
+                message="Are you sure you want to delete this product?"
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={handleConfirmDelete}
+              />
             </>
           ) : (
             <Grow in timeout={500}>

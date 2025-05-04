@@ -16,10 +16,9 @@ const ProfileAvatar = ({ profilePhoto }) => {
   return (
     <>
       <Avatar 
-        src={profilePhoto} 
-        alt="Profile Photo" 
-        sx={{ width: 100, height: 100, cursor: "pointer" }} 
-        onClick={handleOpenDialog} 
+        src={profilePhoto}
+        sx={{ width: 100, height: 100, cursor: ((profilePhoto)?"default":"pointer") }}
+        onClick={profilePhoto ? handleOpenDialog : null} // Only set onClick if profilePhoto exists
       />
 
       <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>

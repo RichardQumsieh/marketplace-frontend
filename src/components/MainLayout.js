@@ -47,6 +47,8 @@ export default function MainLayout ({ children }) {
                 });
                 if (!response.data.user.email) throw Error;
                 setEmail(response.data.user.email);
+                if (response.data.user.user_type === 'Seller') window.location.href = '/seller-profile/Dashboard';
+                else if (response.data.user.user_type === 'Delivery') window.location.href = '/delivery/profile';
                 if (response.data.user.encode) setProfilePhoto(`data:image/jpeg;base64,${response.data.user.encode}`);
             } catch (error) {
                 localStorage.removeItem('authToken');

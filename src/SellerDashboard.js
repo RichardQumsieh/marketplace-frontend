@@ -95,51 +95,70 @@ const SellerDashboard = () => {
     </Paper>
   );
 
-  const renderRatingDistribution = () => (
-    <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Customer Ratings
-        </Typography>
-        <Box display="flex" alignItems="center">
-          <Star color="primary" sx={{ mr: 1 }} />
-          <Typography variant="h5">
-            {insights?.ratings?.average_rating?.toFixed(1) || '0.0'}
+  const renderRatingDistribution = () => {
+    const totalReviews = insights?.ratings?.total_reviews || 0;
+
+    // Precompute percentages for each star rating
+    const ratingPercentages = {
+      five: (insights?.ratings?.five_stars / totalReviews) * 100 || 0,
+      four: (insights?.ratings?.four_stars / totalReviews) * 100 || 0,
+      three: (insights?.ratings?.three_stars / totalReviews) * 100 || 0,
+      two: (insights?.ratings?.two_stars / totalReviews) * 100 || 0,
+      one: (insights?.ratings?.one_stars / totalReviews) * 100 || 0,
+    };
+
+    return (
+      <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Customer Ratings
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
-            /5 ({insights?.ratings?.total_reviews || 0} reviews)
-          </Typography>
-        </Box>
-      </Box>
-      
-      {[5, 4, 3, 2, 1].map((stars) => (
-        <Box key={stars} display="flex" alignItems="center" mb={1}>
-          <Typography variant="body2" sx={{ width: 80 }}>
-            {stars} Star{stars !== 1 ? 's' : ''}
-          </Typography>
-          <Box flexGrow={1} mx={2}>
-            <LinearProgress
-              variant="determinate"
-              value={(insights?.ratings?.[`${stars}_stars`] / insights?.ratings?.total_reviews) * 100 || 0}
-              sx={{
-                height: 8,
-                borderRadius: 4,
-                bgcolor: theme.palette.grey[200],
-                '& .MuiLinearProgress-bar': {
-                  bgcolor: stars >= 4 ? theme.palette.success.main : 
-                          stars >= 3 ? theme.palette.warning.main : 
-                          theme.palette.error.main
-                }
-              }}
-            />
+          <Box display="flex" alignItems="center">
+            <Star color="primary" sx={{ mr: 1 }} />
+            <Typography variant="h5">
+              {Number(insights?.ratings?.average_rating).toFixed(1) || '0.0'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 0.5 }}>
+              /5 ({totalReviews} reviews)
+            </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary">
-            {insights?.ratings?.[`${stars}_stars`] || 0}
-          </Typography>
         </Box>
-      ))}
-    </Paper>
-  );
+
+        {Object.entries(ratingPercentages).map(([key, percentage], index) => {
+          const stars = 5 - index; // Map keys to star numbers (e.g., "five" -> 5)
+          return (
+            <Box key={stars} display="flex" alignItems="center" mb={1}>
+              <Typography variant="body2" sx={{ width: 80 }}>
+                {stars} Star{stars !== 1 ? 's' : ''}
+              </Typography>
+              <Box flexGrow={1} mx={2}>
+                <LinearProgress
+                  variant="determinate"
+                  value={percentage}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    bgcolor: theme.palette.grey[200],
+                    '& .MuiLinearProgress-bar': {
+                      bgcolor:
+                        stars >= 4
+                          ? theme.palette.success.main
+                          : stars >= 3
+                          ? theme.palette.warning.main
+                          : theme.palette.error.main,
+                    },
+                  }}
+                />
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                {insights?.ratings?.[`${stars}_stars`] || 0}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Paper>
+    );
+  };
 
   const renderRevenueChart = () => {
     return (
@@ -396,7 +415,7 @@ const SellerDashboard = () => {
                   {renderStatCard(
                     <Star />,
                     "Avg. Rating",
-                    insights?.ratings?.average_rating?.toFixed(1) || 0,
+                    Number(insights?.ratings?.average_rating).toFixed(1) || 0,
                     1.8
                   )}
                 </Grid2>

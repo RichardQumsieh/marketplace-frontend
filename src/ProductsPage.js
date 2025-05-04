@@ -33,7 +33,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
-const categories = ['All', 'Electronics', 'Clothing', 'Furniture', 'Books', 'Other'];
+const categories = ['All', 'Electronics', 'Home-Furnish', 'Furniture', 'Books', 'Other'];
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);

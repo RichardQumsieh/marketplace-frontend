@@ -197,7 +197,7 @@ const AddProduct = () => {
               </Typography>
               <Button 
                 variant="contained" 
-                href="/seller/products"
+                href="/seller-profile/Products"
                 sx={{ mt: 2 }}
               >
                 View Products

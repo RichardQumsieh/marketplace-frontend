@@ -321,8 +321,7 @@ const EditProduct = () => {
                     }}
                   >
                     <Avatar 
-                      src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
-                      alt="User Avatar"
+                      src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''}
                       sx={{
                         width: 32,
                         height: 32,
