@@ -31,6 +31,7 @@ import OrdersHistory from './OrdersHistory';
 import SellerSettings from './SellerSettings';
 import SellerProducts from './SellerProducts';
 import SellerDashboard from './SellerDashboard';
+import SellerRefundIssues from './SellerRefundIssues';
 
 const App = () => {
   return (
@@ -198,6 +199,15 @@ const App = () => {
           element={
             <ProtectedRoute allowedUserTypes={['Seller']}>
               <SellerProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/seller-profile/Product-Issues"
+          element={
+            <ProtectedRoute allowedUserTypes={['Seller']}>
+              <SellerRefundIssues />
             </ProtectedRoute>
           }
         />

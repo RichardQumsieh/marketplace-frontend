@@ -200,6 +200,8 @@ const Signin = () => {
               )}
 
               <TextField
+                autoFocus
+                required
                 fullWidth
                 label="Email"
                 name="email"
@@ -215,6 +217,7 @@ const Signin = () => {
               />
               
               <TextField
+                required
                 fullWidth
                 label="Password"
                 name="password"

@@ -131,15 +131,7 @@ const BuyerProfile = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       });
 
-      // Only update UI after successful API call
-      setPaymentInfo([...paymentInfo, {
-        ...newCard,
-        id: Date.now() // Temporary ID until we get the real one from the server
-      }]);
-      
-      // Reset form
-      setNewCard({ card_number: "", card_expiry: "", card_holder_name: "" });
-      alert("Payment method has been added successfully!");
+      window.location.reload();
     } catch (err) {
       setError(`Failed to add payment method: ${err.response?.data?.message || err.message}`);
     }
@@ -647,6 +639,7 @@ const BuyerProfile = () => {
                           <TableCell>
                             <IconButton 
                               onClick={() => {
+                                console.log(card.id);
                                 setCardToDelete(card.id);
                                 setConfirmOpen(true);
                               }}

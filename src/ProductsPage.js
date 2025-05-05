@@ -32,6 +32,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import SafeHTML from './components/SafeHTML';
 
 const categories = ['All', 'Electronics', 'Home-Furnish', 'Furniture', 'Books', 'Other'];
 
@@ -330,7 +331,7 @@ export default function ProductsPage() {
                             flex: 1,
                           }}
                         >
-                          {featuredProduct.description || "Experience the perfect blend of style and functionality with this exceptional product. Designed with premium materials and cutting-edge technology, it delivers outstanding performance and durability."}
+                          <SafeHTML html={featuredProduct.description} />
                         </Typography>
 
                         <Box sx={{ display: 'flex', gap: 1.5, mt: 'auto' }}>

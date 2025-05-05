@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { AppBar, Toolbar, IconButton, Typography, Button, Box, CssBaseline, Avatar, Menu, MenuItem, Tooltip, ThemeProvider, createTheme, Accordion, AccordionSummary, AccordionDetails, Divider, Drawer, Grid2, Link } from "@mui/material";
-import { Menu as MenuIcon, Search as SearchIcon, Login as LoginIcon, Close} from "@mui/icons-material";
-import StoreIcon from '@mui/icons-material/Store';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { Menu as MenuIcon, Login as LoginIcon, Close} from "@mui/icons-material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -135,6 +133,14 @@ export default function MainLayout ({ children }) {
                                     />
                                 </IconButton>
                                 <Menu
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
                                     anchorEl={anchorEl}
                                     open={Boolean(anchorEl)}
                                     onClose={handleMenuClose}
@@ -164,15 +170,15 @@ export default function MainLayout ({ children }) {
                                         </MenuItem>
                                     </Tooltip>
                                     <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
-                                        <AccountCircleIcon fontSize="small" sx={{ mr: 1 }} />
+                                        <AccountCircleIcon fontSize="small" sx={{ mr: 1 }} color="primary"/>
                                         Profile
                                     </MenuItem>
                                     <MenuItem onClick={() => { navigate('/cart'); handleMenuClose(); }}>
-                                        <ShoppingCartIcon fontSize="small" sx={{ mr: 1 }} />
+                                        <ShoppingCartIcon fontSize="small" sx={{ mr: 1 }}  color="primary"/>
                                         Cart
                                     </MenuItem>
                                     <MenuItem onClick={handleLogout}>
-                                        <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+                                        <LogoutIcon fontSize="small" sx={{ mr: 1 }} color="error"/>
                                         Logout
                                     </MenuItem>
                                 </Menu>
@@ -238,23 +244,33 @@ export default function MainLayout ({ children }) {
                         <AccordionDetails>
                             <Typography component="ul" sx={{ listStyleType: 'none', padding: 0, margin: 0 }}>
                                 <li>
+                                    - <Link href="/products?category=All" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        All
+                                    </Link>
+                                </li>
+                                <li>
                                     - <Link href="/products?category=Electronics" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
                                         Electronics
                                     </Link>
                                 </li>
                                 <li>
-                                    - <Link href="/products?category=Fashion" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
-                                        Fashion
+                                    - <Link href="/products?category=Home-Furnish" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Home-Furnish
                                     </Link>
                                 </li>
                                 <li>
-                                    - <Link href="/products?category=Home-appliances" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
-                                        Home Appliances
+                                    - <Link href="/products?category=Furniture" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Furniture
                                     </Link>
                                 </li>
                                 <li>
                                     - <Link href="/products?category=Books" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
                                         Books
+                                    </Link>
+                                </li>
+                                <li>
+                                    - <Link href="/products?category=Other" underline="hover" sx={{ color: '#48BFE3', textDecoration: 'none', display: 'inline-block', mb: 1 }}>
+                                        Other
                                     </Link>
                                 </li>
                             </Typography>

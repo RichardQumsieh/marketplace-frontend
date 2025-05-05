@@ -1,4 +1,4 @@
-import { Analytics, Close, Inventory, Logout, Settings } from "@mui/icons-material";
+import { Analytics, Close, Inventory, Logout, ProductionQuantityLimits, Settings } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { alpha, AppBar, Avatar, Box, createTheme, CssBaseline, Drawer, IconButton, Menu, MenuItem, Tab, Tabs, ThemeProvider, Typography, useMediaQuery } from "@mui/material";
 import axios from "axios";
@@ -13,16 +13,16 @@ export default function SellerNav({children}) {
     const [scrolled, setScrolled] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const handleTabChange = (event, newValue) => {
-    setDrawerOpen(false);
+    const handleTabChange = () => {
+      setDrawerOpen(false);
     };
     
     const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+      setAnchorEl(event.currentTarget);
     };
 
     const handleMenuClose = () => {
-    setAnchorEl(null);
+      setAnchorEl(null);
     };
     
     const handleLogout = () => {
@@ -208,14 +208,28 @@ export default function SellerNav({children}) {
                   </Typography>
                 </Box>
               
-                <Avatar 
-                  src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''} 
+                <IconButton
+                  onClick={handleMenuOpen} 
                   sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: 'primary.main'
+                    p: 0.5,
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                    '&:hover': {
+                      borderColor: 'primary.light',
+                      transform: 'scale(1.05)',
+                      transition: 'all 0.2s ease'
+                    }
                   }}
-                />
+                >
+                  <Avatar 
+                    src={`data:image/jpeg;base64,${seller?.profile_photo}` || ''}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: 'primary.main'
+                    }}
+                  />
+                </IconButton>
               </Box>
             ) : (
               <Box sx={{ 
@@ -278,34 +292,48 @@ export default function SellerNav({children}) {
                         }}
                       />
                     </IconButton>
-                    
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                      slotProps={{ paper: {
-                        mt: 1.5,
-                        minWidth: 180,
-                        borderRadius: 2,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-                        '& .MuiMenuItem-root': {
-                          px: 2,
-                          py: 1.5,
-                          '&:hover': {
-                            bgcolor: 'rgba(144, 202, 249, 0.08)'
-                          }
-                        },
-                        }}}
-                    >
-                      <MenuItem onClick={handleLogout}>
-                        <Logout fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
-                        Logout
-                      </MenuItem>
-                    </Menu>
                   </Box>
                 </Box>
               </Box>
             )}
+            
+            <Menu
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              slotProps={{ paper: {
+                  sx: {
+                      bgcolor: 'rgba(13, 17, 23, 0.95)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(72, 191, 227, 0.2)',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+                      color: '#fff',
+                      '& .MuiMenuItem-root': {
+                          '&:hover': {
+                              bgcolor: 'rgba(72, 191, 227, 0.1)',
+                          }
+                      }
+                  }
+              }
+              }}
+            >
+              <MenuItem onClick={() => {navigate('/seller-profile/Product-Issues'); handleMenuClose();}}>
+                <ProductionQuantityLimits fontSize="small" sx={{ mr: 1, color: 'warning.main' }} />
+                Product Issues
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Logout fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
+                Logout
+              </MenuItem>
+            </Menu>
         </AppBar>
         <main>{children}</main>
         </ThemeProvider>

@@ -204,6 +204,7 @@ const Signup = () => {
               {error && <Alert severity="info" variant="filled" sx={{ opacity: 0.85 }}>{error}</Alert>}
               {success && <Alert severity="success" variant="filled" sx={{ opacity: 0.85 }}>{success}</Alert>}
               <TextField
+                autoFocus
                 label="Email"
                 name="email"
                 variant="outlined"
