@@ -28,7 +28,7 @@ const FeaturedReviews = ({ reviews }) => (
           </Box>
         </Box>
         <Divider sx={{ my: 1 }} />
-        <Rating size='small' value={review.rating} readOnly sx={{ mb: 1 }} />
+        <Rating size='small' value={review.rating} precision={0.5} readOnly sx={{ mb: 1 }} />
         <Typography variant='subtitle2'>{review.review}</Typography>
       </Box>
     ))}

@@ -201,15 +201,44 @@ const About = () => {
         <Typography variant="h4" textAlign="center" gutterBottom>
           Meet our Team
         </Typography>
-        <Box textAlign="center" mt={3}>
-          <Avatar
-            alt="Developer"
-            src="images/Richard_Qumsieh.jpg"
-            sx={{ width: 100, height: 100, mx: "auto" }}
-          />
-          <Typography variant="h6" mt={2}>Richard Qumsieh</Typography>
-          <Typography color="text.secondary">Software Engineer & AI Enthusiast</Typography>
-        </Box>
+        <Grid2 container spacing={4} mt={3} textAlign={"center"}>
+          <Grid2 item size={{ xs: 12, md: 3 }}>
+            <Avatar
+              alt="Developer"
+              src="images/Richard_Qumsieh.jpg"
+              sx={{ width: 100, height: 100, mx: "auto" }}
+            />
+            <Typography variant="h6" mt={2}>Richard Qumsieh</Typography>
+            <Typography color="text.secondary">Software Engineer & AI Enthusiast</Typography>
+          </Grid2>
+          <Grid2 item size={{ xs: 12, md: 3 }}>
+            <Avatar
+              alt="Developer"
+              src="images/Hamzeh_Na3eem.jpeg"
+              sx={{ width: 100, height: 100, mx: "auto" }}
+            />
+            <Typography variant="h6" mt={2}>Hamzeh Na3eem</Typography>
+            <Typography color="text.secondary">Sleep Engineer</Typography>
+          </Grid2>
+          <Grid2 item size={{ xs: 12, md: 3 }}>
+            <Avatar
+              alt="Developer"
+              src="images/AlRahahleh.png"
+              sx={{ width: 100, height: 100, mx: "auto" }}
+            />
+            <Typography variant="h6" mt={2}>Mhmd Al-Rahahleh</Typography>
+            <Typography color="text.secondary">Logic, Org and SP oriented</Typography>
+          </Grid2>
+          <Grid2 item size={{ xs: 12, md: 3 }}>
+            <Avatar
+              alt="Developer"
+              src="images/AlNajjar.png"
+              sx={{ width: 100, height: 100, mx: "auto" }}
+            />
+            <Typography variant="h6" mt={2}>Mhmd Al-Najjar</Typography>
+            <Typography color="text.secondary">Back Pain Specialist</Typography>
+          </Grid2>
+        </Grid2>
       </Container>
 
       {/* Vision */}
