@@ -32,6 +32,7 @@ import SellerSettings from './SellerSettings';
 import SellerProducts from './SellerProducts';
 import SellerDashboard from './SellerDashboard';
 import SellerRefundIssues from './SellerRefundIssues';
+import DeliveryDashboard from './DeliveryDashboard';
 
 const App = () => {
   return (
@@ -94,7 +95,7 @@ const App = () => {
           path="/delivery/profile"
           element={
             <ProtectedRoute allowedUserTypes={['Delivery']}>
-              <DeliveryProfile />
+              <DeliveryDashboard />
             </ProtectedRoute>
           }
         />
