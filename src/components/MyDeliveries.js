@@ -31,7 +31,7 @@ const MyDeliveries = () => {
       });
       setActiveOrders(response.data);
     } catch (err) {
-      setError('Failed to load your deliveries');
+      setError(err.message);
       console.error(err);
     } finally {
       setLoading(false);

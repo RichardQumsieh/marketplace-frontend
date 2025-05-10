@@ -1,20 +1,22 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Box, TextField, Button, Typography, IconButton,
-  ThemeProvider, createTheme, useMediaQuery, Grid2, Fade, Zoom, Tabs, Tab
+  ThemeProvider, createTheme, Grid2, Fade, Zoom, Tabs, Tab,
+  CircularProgress
 } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import ProfileAvatar from "./components/ProfileAvatar";
 import ConfirmationDrawer from "./components/ConfirmationDrawer";
 import Footer from "./components/Footer";
+import GovernorateSelector from "./components/GovernorateSelector";
 
 const BuyerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [paymentInfo, setPaymentInfo] = useState([]);
   const [userEmail, setUserEmail] = useState('');
-  const [buyer, setBuyer] = useState({ first_name: "", last_name: "", street: "", city: "", state: "", country: "", postal_code: null });
+  const [buyer, setBuyer] = useState({ first_name: "", last_name: "", street: "", city: "", state: "", country: "", postal_code: null, governorate_id: "" });
   const [newCard, setNewCard] = useState({ card_number: "", card_expiry: "", card_holder_name: "" });
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -85,6 +87,7 @@ const BuyerProfile = () => {
       formData.append("state", buyer.state);
       formData.append("country", buyer.country);
       formData.append("postal_code", buyer.postal_code);
+      formData.append("governorate_id", buyer.governorate_id);
       formData.append("email", userEmail);
       if (profilePhoto) formData.append("profile_photo", profilePhoto);
       
@@ -268,11 +271,15 @@ const BuyerProfile = () => {
     },
   });
 
-  const isMobile = useMediaQuery('(max-width:600px)');
-
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  if (loading) return (
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+    </Box>
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -511,6 +518,10 @@ const BuyerProfile = () => {
                           onChange={(e) => setBuyer({ ...buyer, postal_code: e.target.value })} 
                           fullWidth 
                           required
+                        />
+                        <GovernorateSelector 
+                          value={buyer.governorate_id}
+                          onChange={(value) => setBuyer({...buyer, governorate_id: value})}
                         />
                       </Box>
                     </Fade>

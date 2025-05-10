@@ -3,17 +3,16 @@ import {
   Box, 
   Tabs, 
   Tab, 
-  Container, 
-  Typography,
+  Container,
   Paper,
   CircularProgress
 } from '@mui/material';
 import axios from 'axios';
 import AvailableOrders from './components/AvailableOrders';
 import MyDeliveries from './components/MyDeliveries';
-import DeliveryAreaForm from './components/DeliveryAreaForm';
 import LocationUpdater from './components/LocationUpdater';
 import BusinessNavBar from './components/BusinessNavBar';
+import Footer from './components/Footer';
 
 const DeliveryDashboard = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -55,27 +54,22 @@ const DeliveryDashboard = () => {
 
   return (
     <BusinessNavBar>
-        <Container maxWidth="xl">
-        <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>
-            Delivery Dashboard
-        </Typography>
-        
         <Paper elevation={3} sx={{ mb: 3 }}>
             <Tabs value={tabValue} onChange={handleTabChange} variant="scrollable">
             <Tab label="Available Orders" />
             <Tab label="My Deliveries" />
-            <Tab label="My Delivery Area" />
             <Tab label="Location Settings" />
             </Tabs>
         </Paper>
 
-        <Box sx={{ mb: 4 }}>
-            {tabValue === 0 && <AvailableOrders />}
-            {tabValue === 1 && <MyDeliveries />}
-            {tabValue === 2 && <DeliveryAreaForm />}
-            {tabValue === 3 && <LocationUpdater />}
-        </Box>
+        <Container maxWidth="xl" sx={{ minHeight: '53vh' }}>
+          <Box sx={{ mb: 4 }}>
+              {tabValue === 0 && <AvailableOrders />}
+              {tabValue === 1 && <MyDeliveries />}
+              {tabValue === 2 && <LocationUpdater />}
+          </Box>
         </Container>
+        <Footer />
     </BusinessNavBar>
   );
 };

@@ -7,13 +7,17 @@ import {
   FormControlLabel,
   CircularProgress,
   Alert,
-  Paper
+  Paper,
+  Divider
 } from '@mui/material';
 import axios from 'axios';
+import UserLocationMap from './UserLocationMap';
+import DeliveryAreaMap from './DeliveryAreaMap';
 
 const LocationUpdater = () => {
   const [isActive, setIsActive] = useState(false);
   const [location, setLocation] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [watchId, setWatchId] = useState(null);
@@ -48,8 +52,9 @@ const LocationUpdater = () => {
     
     const id = navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
+        const { latitude, longitude, accuracy } = position.coords;
         setLocation({ lat: latitude, lng: longitude });
+        setAccuracy(accuracy);
         updateBackendLocation(latitude, longitude);
       },
       (err) => {
@@ -88,8 +93,11 @@ const LocationUpdater = () => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Location Settings
+        Delivery Area Map
       </Typography>
+      <DeliveryAreaMap />
+
+      <Divider sx={{ my: 2 }}/>
       
       <Paper elevation={3} sx={{ p: 3 }}>
         <FormControlLabel
@@ -113,23 +121,23 @@ const LocationUpdater = () => {
         
         {location && (
           <Box sx={{ mt: 2 }}>
-            <Typography>
+            <Typography sx={{ mb: 2 }}>
               Your current location: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
             </Typography>
+            <UserLocationMap position={location} accuracy={accuracy}/>
+            <Button
+              variant="outlined"
+              sx={{ mt: 2 }}
+              onClick={() => {
+                if (location) {
+                  updateBackendLocation(location.lat, location.lng);
+                }
+              }}
+            >
+              Update Location Now
+            </Button>
           </Box>
         )}
-        
-        <Button
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={() => {
-            if (location) {
-              updateBackendLocation(location.lat, location.lng);
-            }
-          }}
-        >
-          Update Location Now
-        </Button>
       </Paper>
     </Box>
   );
