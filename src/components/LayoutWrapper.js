@@ -1,13 +1,13 @@
 import { useLocation } from 'react-router-dom';
 import MainLayout from './MainLayout';
 
-const NO_LAYOUT_ROUTES = ['/', '/sign-in', '/signup', '/forgot-password', '/admin-auth', '/add-product'];
-const MAIN_LAYOUT_PREFIXES = ['/product/', '/cart', '/checkout', '/profile', '/privacy', '/products', '/orders-history', '/business'];
+// const NO_LAYOUT_ROUTES = ['/', '/sign-in', '/signup', '/forgot-password', '/admin-auth', '/add-product'];
+const MAIN_LAYOUT_PREFIXES = ['/product/', '/cart', '/checkout', '/profile', '/products', '/orders-history'];
 
 const LayoutWrapper = ({ children }) => {
   const { pathname } = useLocation();
   
-  if (MAIN_LAYOUT_PREFIXES.some(prefix => pathname.startsWith(prefix)) || pathname === '/about') {
+  if (MAIN_LAYOUT_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
     return <MainLayout>{children}</MainLayout>;
   } else {
     return children;

@@ -3,10 +3,7 @@ import {
   Box, 
   Container, 
   Typography, 
-  Grid2, 
-  Card, 
-  CardContent,
-  CardMedia,
+  Grid2,
   Button,
   ThemeProvider,
   createTheme,
@@ -16,7 +13,6 @@ import { motion } from "framer-motion";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import SecurityIcon from '@mui/icons-material/Security';
 import SpeedIcon from '@mui/icons-material/Speed';
-import BusinessNavBar from "./components/BusinessNavBar";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useNavigate } from "react-router-dom";

@@ -16,7 +16,7 @@ const BuyerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [paymentInfo, setPaymentInfo] = useState([]);
   const [userEmail, setUserEmail] = useState('');
-  const [buyer, setBuyer] = useState({ first_name: "", last_name: "", street: "", city: "", state: "", country: "", postal_code: null, governorate_id: "" });
+  const [buyer, setBuyer] = useState({ first_name: "", last_name: "", street: "", city: "", state: "", country: "", postal_code: null, governorate_id: null });
   const [newCard, setNewCard] = useState({ card_number: "", card_expiry: "", card_holder_name: "" });
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -34,7 +34,10 @@ const BuyerProfile = () => {
         });
         setUserEmail(data.user.email);
         if (data.user?.encode) setPreview(`data:image/jpeg;base64,${data.user.encode}`);
-        setBuyer(data.buyer);
+        setBuyer({
+          ...data.buyer,
+          governorate_id: data.buyer.governorate_id ?? null,
+        });
         if (data.paymentMethods) setPaymentInfo(data.paymentMethods);
       } catch (err) {
         setError("Failed to load payment information");
@@ -503,7 +506,7 @@ const BuyerProfile = () => {
                           required
                         />
 
-                        {buyer.country === 'US' && (
+                        {(String(buyer.country).toLowerCase() === 'US' || String(buyer.country).toLowerCase() === 'united states')  && (
                           <TextField 
                             label="State" 
                             value={buyer.state} 
@@ -519,10 +522,12 @@ const BuyerProfile = () => {
                           fullWidth 
                           required
                         />
-                        <GovernorateSelector 
-                          value={buyer.governorate_id}
-                          onChange={(value) => setBuyer({...buyer, governorate_id: value})}
-                        />
+                        {(String(buyer.country).toLowerCase() === 'jordan' || String(buyer.country).toLowerCase() === 'jo') && (
+                          <GovernorateSelector 
+                            value={buyer.governorate_id}
+                            onChange={(value) => setBuyer({...buyer, governorate_id: value})}
+                          />
+                        )}
                       </Box>
                     </Fade>
                   </Grid2>

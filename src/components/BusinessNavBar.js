@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -8,11 +8,13 @@ import {
   MenuItem,
   Avatar,
   Button,
+  ThemeProvider,
+  CssBaseline,
+  createTheme,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import "@fontsource/yeseva-one";
 import axios from 'axios';
@@ -66,8 +68,36 @@ const BusinessNavBar = ({children}) => {
     fetchProfilePhoto();
   }, []);
 
+      const theme = createTheme({
+        palette: {
+          mode: 'dark',
+          primary: {
+            main: '#1976d2', // A more professional blue
+          },
+          background: {
+            default: '#121212', // Dark background
+            paper: '#1e1e1e', // Slightly lighter for cards and papers
+          },
+          text: {
+            primary: '#ffffff', // White text
+            secondary: '#b3b3b3', // Light grey for secondary text
+          },
+        },
+        typography: {
+          allVariants: {
+            fontFamily: '"Lora", serif', // Default for body
+          },
+          h6: {
+            fontFamily: '"Playfair Display", serif',
+            fontWeight: 500,
+            color: 'white'
+          },
+        },
+      });
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
         <AppBar
         position="static"
         sx={{
@@ -125,7 +155,7 @@ const BusinessNavBar = ({children}) => {
         </Toolbar>
         </AppBar>
         <main>{children}</main>
-    </>
+    </ThemeProvider>
   );
 };
 

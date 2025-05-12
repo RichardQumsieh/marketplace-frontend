@@ -1,16 +1,49 @@
-import React from "react";
-import { Box, Typography, Container } from "@mui/material";
+import { Box, Typography, Container, ThemeProvider, CssBaseline, createTheme } from "@mui/material";
 import Footer from "./components/Footer";
 
 const PrivacyPolicy = () => {
+
+    const theme = createTheme({
+      palette: {
+        mode: 'dark',
+        primary: {
+          main: '#1976d2', // A more professional blue
+        },
+        background: {
+          default: '#121212', // Dark background
+          paper: '#1e1e1e', // Slightly lighter for cards and papers
+        },
+        text: {
+          primary: '#ffffff', // White text
+          secondary: '#b3b3b3', // Light grey for secondary text
+        },
+      },
+      typography: {
+        allVariants: {
+          fontFamily: '"Lora", serif', // Default for body
+        },
+        h3: {
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 600,
+          color: 'white'
+        },
+        h5: {
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 500,
+          color: 'white'
+        },
+      },
+    });
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Container sx={{ py: 6 }}>
         <Typography variant="h3" gutterBottom fontWeight="bold">
             Privacy Policy
         </Typography>
 
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1">
             Welcome to GoPrime. Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you use our marketplace platform.
         </Typography>
 
@@ -18,7 +51,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             1. Information We Collect
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             We collect the following types of information:
             </Typography>
             <ul>
@@ -33,7 +66,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             2. How We Use Your Information
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             We use your data to:
             </Typography>
             <ul>
@@ -48,7 +81,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             3. Data Sharing
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             We only share your information with:
             </Typography>
             <ul>
@@ -62,7 +95,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             4. Your Rights
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             You have the right to:
             </Typography>
             <ul>
@@ -76,7 +109,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             5. Data Security
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             We use encryption, secure servers, and regular audits to protect your data. However, no method of online transmission is 100% secure.
             </Typography>
         </Box>
@@ -85,7 +118,7 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             6. Changes to This Policy
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             We may update this Privacy Policy from time to time. We will notify users about major changes by email or through our website.
             </Typography>
         </Box>
@@ -94,14 +127,14 @@ const PrivacyPolicy = () => {
             <Typography variant="h5" gutterBottom>
             7. Contact Us
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
             If you have any questions or concerns about this Privacy Policy, feel free to contact us at: <strong>support@goprime.com</strong>
             </Typography>
         </Box>
 
         </Container>
         <Footer />
-    </>
+    </ThemeProvider>
   );
 };
 

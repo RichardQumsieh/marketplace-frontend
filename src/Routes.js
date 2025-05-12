@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminDashboard from './AdminDashboard';
 import AdminDeliveryRequests from './AdminDeliveryPersonnel';
@@ -19,7 +18,6 @@ import CartPage from './CartPage';
 import BuyerProfilePage from './BuyerProfile';
 import AdminSettings from './AdminSettings';
 import DeliverySignup from './DeliverySignup';
-import { DeliveryProfile } from './DeliveryProfile';
 import DeliveryOrders from './DeliveryOrders';
 import Checkout from './Checkout';
 import About from './About';
