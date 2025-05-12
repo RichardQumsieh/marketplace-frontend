@@ -18,7 +18,6 @@ import CartPage from './CartPage';
 import BuyerProfilePage from './BuyerProfile';
 import AdminSettings from './AdminSettings';
 import DeliverySignup from './DeliverySignup';
-import DeliveryOrders from './DeliveryOrders';
 import Checkout from './Checkout';
 import About from './About';
 import BusinessPage from './BusinessPage';
@@ -94,15 +93,6 @@ const App = () => {
           element={
             <ProtectedRoute allowedUserTypes={['Delivery']}>
               <DeliveryDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/delivery/orders"
-          element={
-            <ProtectedRoute allowedUserTypes={['Delivery']}>
-              <DeliveryOrders />
             </ProtectedRoute>
           }
         />

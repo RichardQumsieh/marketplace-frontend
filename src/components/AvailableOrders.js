@@ -74,17 +74,18 @@ const AvailableOrders = ({ deliveryPersonId }) => {
   useEffect(() => {
     const fetchAvailableOrders = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/available-orders`, {
+        const res = await axios.get(`http://localhost:5000/api/available-orders`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
-        
-        setOrders(data.data);
-        setCurrentLocation(data.currentLocation);
-        setWarehouseLocation(data.warehouseLocation);
+
+        setOrders(res.data.data);
+        setCurrentLocation(res.data.currentLocation);
+        setWarehouseLocation(res.data.warehouseLocation);
       } catch (err) {
         setError(err.message);
+        window.location.href = "?page=location-settings";
       } finally {
         setLoading(false);
       }

@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { Container } from '@mui/material';
+import { Alert, Container } from '@mui/material';
 import axios from 'axios';
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -46,7 +46,7 @@ const DeliveryAreaMap = ({ deliveryPersonnelId }) => {
         
         setDeliveryArea(data);
       } catch (err) {
-        setError(err.message);
+        setError("Admins are still studying your application to determine service area");
       } finally {
         setLoading(false);
       }
@@ -56,7 +56,7 @@ const DeliveryAreaMap = ({ deliveryPersonnelId }) => {
   }, [deliveryPersonnelId]);
 
   if (loading) return <div>Loading delivery area...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <Alert color='warning'>Note: {error}</Alert>;
   if (!deliveryArea) return <div>No delivery area assigned</div>;
 
   return (

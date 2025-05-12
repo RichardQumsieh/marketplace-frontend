@@ -75,18 +75,23 @@ const LocationUpdater = () => {
     }
   };
 
-  const updateBackendLocation = async (lat, lng) => {
+  const updateBackendLocation = async (lat, lng, onSuccess, onLoading) => {
+    if (onLoading) onLoading(true); // Trigger loading state
     try {
-      await axios.post('http://localhost:5000/api/update-location', {
-        lat,
-        lng
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+      await axios.post(
+        'http://localhost:5000/api/update-location',
+        { lat, lng },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
+          }
         }
-      });
+      );
+      if (onSuccess) onSuccess(); // Trigger success callback
     } catch (err) {
       console.error('Failed to update location', err);
+    } finally {
+      if (onLoading) onLoading(false); // End loading state
     }
   };
 
@@ -130,7 +135,12 @@ const LocationUpdater = () => {
               sx={{ mt: 2 }}
               onClick={() => {
                 if (location) {
-                  updateBackendLocation(location.lat, location.lng);
+                  updateBackendLocation(
+                    location.lat,
+                    location.lng,
+                    () => alert('Location updated successfully!'), // onSuccess callback
+                    (isLoading) => setLoading(isLoading) // onLoading callback
+                  );
                 }
               }}
             >
