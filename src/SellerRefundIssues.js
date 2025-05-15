@@ -14,6 +14,7 @@ import {
   Alert,
   Container,
   Grid2,
+  Button,
 } from "@mui/material";
 import SellerNav from "./components/SellerNav";
 import Footer from "./components/Footer";
@@ -102,6 +103,7 @@ const SellerRefundIssues = () => {
                         <TableCell><strong>Details</strong></TableCell>
                         <TableCell><strong>Status</strong></TableCell>
                         <TableCell><strong>Created At</strong></TableCell>
+                        <TableCell><strong>Actions</strong></TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
@@ -115,6 +117,58 @@ const SellerRefundIssues = () => {
                         <TableCell>{issue.status}</TableCell>
                         <TableCell>
                             {new Date(issue.created_at).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" gap={1}>
+                            <Button
+                            color="primary"
+                              onClick={async () => {
+                                try {
+                                  setLoading(true);
+                                  const token = localStorage.getItem("authToken");
+                                  await axios.post(
+                                    `http://localhost:5000/api/refund-requests/${issue.refund_id}/approve`,
+                                    {},
+                                    { headers: { Authorization: `Bearer ${token}` } }
+                                  );
+                                  setRefundIssues((prev) =>
+                                    prev.filter((i) => i.refund_id !== issue.refund_id)
+                                  );
+                                } catch (err) {
+                                  setError("Failed to approve refund.");
+                                } finally {
+                                  setLoading(false);
+                                }
+                              }}
+                            >
+                              Refund
+                            </Button>
+                            <Button
+                            color="error"
+                              onClick={async () => {
+                                const reason = window.prompt("Enter rejection reason:");
+                                if (!reason) return;
+                                try {
+                                  setLoading(true);
+                                  const token = localStorage.getItem("authToken");
+                                  await axios.post(
+                                    `http://localhost:5000/api/refund-requests/${issue.refund_id}/reject`,
+                                    { reason },
+                                    { headers: { Authorization: `Bearer ${token}` } }
+                                  );
+                                  setRefundIssues((prev) =>
+                                    prev.filter((i) => i.refund_id !== issue.refund_id)
+                                  );
+                                } catch (err) {
+                                  setError("Failed to reject refund.");
+                                } finally {
+                                  setLoading(false);
+                                }
+                              }}
+                            >
+                              Reject
+                            </Button>
+                          </Box>
                         </TableCell>
                         </TableRow>
                     ))}
