@@ -10,12 +10,12 @@ import {
 import axios from 'axios';
 import AvailableOrders from './components/AvailableOrders';
 import MyDeliveries from './components/MyDeliveries';
-import LocationUpdater from './components/LocationUpdater';
 import BusinessNavBar from './components/BusinessNavBar';
 import Footer from './components/Footer';
 import { useLocation } from 'react-router-dom';
+import DeliveryPersonnelSettings from './components/DeliveryPersonnelSettings';
 
-const validTabs = ['available-orders', 'my-deliveries', 'location-settings'];
+const validTabs = ['available-orders', 'my-deliveries', 'settings'];
 
 const DeliveryDashboard = () => {
   const location = useLocation();
@@ -69,7 +69,7 @@ const DeliveryDashboard = () => {
         <Tabs value={tabValue} onChange={handleTabChange} variant="scrollable">
           <Tab label="Available Orders" value="available-orders" />
           <Tab label="My Deliveries" value="my-deliveries" />
-          <Tab label="Location Settings" value="location-settings" />
+          <Tab label="Personal Settings" value="settings" />
         </Tabs>
       </Paper>
 
@@ -77,7 +77,7 @@ const DeliveryDashboard = () => {
         <Box sx={{ mb: 4 }}>
           {tabValue === 'available-orders' && <AvailableOrders />}
           {tabValue === 'my-deliveries' && <MyDeliveries />}
-          {tabValue === 'location-settings' && <LocationUpdater />}
+          {tabValue === 'settings' && <DeliveryPersonnelSettings />}
         </Box>
       </Container>
       <Footer />

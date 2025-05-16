@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Avatar, Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ProfileAvatar = ({ profilePhoto }) => {
+const ProfileAvatar = ({ profilePhoto, width = 100, height = 100, mr = 0 }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -17,7 +17,7 @@ const ProfileAvatar = ({ profilePhoto }) => {
     <>
       <Avatar 
         src={profilePhoto}
-        sx={{ width: 100, height: 100, cursor: ((profilePhoto)?"default":"pointer") }}
+        sx={{ width: width, height: height, mr: mr, cursor: ((profilePhoto)?"default":"pointer") }}
         onClick={profilePhoto ? handleOpenDialog : null} // Only set onClick if profilePhoto exists
       />
 

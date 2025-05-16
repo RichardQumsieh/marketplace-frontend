@@ -81,15 +81,32 @@ const AvailableOrders = ({ deliveryPersonId }) => {
         });
 
         setOrders(res.data.data);
-        setCurrentLocation(res.data.currentLocation);
         setWarehouseLocation(res.data.warehouseLocation);
       } catch (err) {
         setError(err.message);
-        window.location.href = "?page=location-settings";
+        window.location.href = "?page=settings";
       } finally {
         setLoading(false);
       }
     };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          setError('Unable to retrieve your location');
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by this browser.');
+      setLoading(false);
+    }
 
     fetchAvailableOrders();
     

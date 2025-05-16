@@ -32,6 +32,7 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import AdminNavBar from './components/AdminNav';
 import Footer from './components/Footer';
+import ProfileAvatar from './components/ProfileAvatar';
 
 const AdminDeliveryRequests = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -123,9 +124,11 @@ const AdminDeliveryRequests = () => {
       width: 240,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar 
-            src={params.value.profile_photo}
-            sx={{ width: 32, height: 32, mr: 1 }}
+          <ProfileAvatar 
+            profilePhoto={`data:image/jpeg;base64,${params.value.profile_photo}`}
+            width={32}
+            height={32}
+            mr={1}
           />
           <Typography color='primary' variant='caption'>{params.value.email}</Typography>
         </Box>
