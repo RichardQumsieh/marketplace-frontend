@@ -31,6 +31,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import AdminNavBar from './components/AdminNav';
+import Footer from './components/Footer';
 
 const AdminDeliveryRequests = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -118,21 +119,17 @@ const AdminDeliveryRequests = () => {
     },
     { 
       field: 'personal_info', 
-      headerName: 'Photo', 
-      width: 200,
+      headerName: 'Personal Info', 
+      width: 240,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar 
-            src={params.row.profile_photo}
+            src={params.value.profile_photo}
             sx={{ width: 32, height: 32, mr: 1 }}
           />
+          <Typography color='primary' variant='caption'>{params.value.email}</Typography>
         </Box>
       )
-    },
-    { 
-      field: 'email', 
-      headerName: 'Email', 
-      width: 200 
     },
     { 
       field: 'phone_number', 
@@ -224,7 +221,7 @@ const AdminDeliveryRequests = () => {
                 setOpenDetailsDialog(true); // Open the details dialog
               }}
             >
-              <DetailsIcon />
+              <DetailsIcon sx={{ verticalAlign: 'middle' }}/>
             </IconButton>
           </Tooltip>
         </Box>
@@ -366,6 +363,7 @@ const AdminDeliveryRequests = () => {
           </DialogActions>
         </Dialog>
       </Container>
+      <Footer />
     </AdminNavBar>
   );
 };
