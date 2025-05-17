@@ -176,8 +176,8 @@ const AvailableOrders = ({ deliveryPersonId }) => {
                 <Marker
                   key={order.id}
                   position={[
-                    order.location.governorate_center.coordinates[1],
-                    order.location.governorate_center.coordinates[0]
+                    order.delivery_location.coordinates[1],
+                    order.delivery_location.coordinates[0]
                   ]}
                   icon={orderIcon}
                 >
@@ -197,9 +197,6 @@ const AvailableOrders = ({ deliveryPersonId }) => {
                         }}>
                           <ShoppingBagIcon sx={{ fontSize: 14 }} />
                         </Avatar>
-                        <Typography variant="body2">
-                          {(order.distance_meters / 1000).toFixed(1)} km away
-                        </Typography>
                       </Box>
                       
                       <Typography variant="body2" sx={{ mb: 1 }}>
@@ -271,20 +268,15 @@ const AvailableOrders = ({ deliveryPersonId }) => {
                       <ListItemText
                         primary={`Order #${order.id}`}
                         secondary={
-                          <>
-                            <Box component="span" sx={{ display: 'block' }}>
-                              {order.buyer_name} • {(order.distance_meters / 1000).toFixed(1)} km
-                            </Box>
-                            <Box component="span" sx={{ display: 'block' }}>
-                              <Chip 
-                                label={`${Number(order.total_amount / 1.3701710).toFixed(2)} JOD`} 
-                                size="small" 
-                                color="success"
-                                sx={{ mr: 1 }}
-                              />
-                              {order.street}, {order.city}
-                            </Box>
-                          </>
+                          <Box>
+                            <Chip 
+                              label={`${Number(order.total_amount / 1.3701710).toFixed(2)} JOD`} 
+                              size="small" 
+                              color="success"
+                              sx={{ my: 1 }}
+                            />
+                            <Typography variant='caption' sx={{ display: 'block' }}>{order.street}, {order.city}</Typography>
+                          </Box>
                         }
                       />
                     </ListItem>

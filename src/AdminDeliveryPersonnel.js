@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Container,
   Button,
@@ -12,7 +12,6 @@ import {
   FormControl,
   InputLabel,
   Chip,
-  Avatar,
   Box,
   Typography,
   Paper,
@@ -148,7 +147,7 @@ const AdminDeliveryRequests = () => {
           label={params.value} 
           color={
             params.value === 'Active' ? 'success' : 
-            params.value === 'Pending' ? 'warning' : 'error'
+            params.value === 'Inactive' ? 'warning' : 'error'
           } 
           size="small"
         />
@@ -190,7 +189,7 @@ const AdminDeliveryRequests = () => {
       width: 200,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {params.row.user_status === 'Pending' && (
+          {params.row.user_status === 'Inactive' && (
             <>
               <Tooltip title="Approve">
                 <IconButton
@@ -267,11 +266,22 @@ const AdminDeliveryRequests = () => {
         </Paper>
 
         {/* Approve Dialog */}
-        <Dialog open={openApproveDialog} onClose={() => setOpenApproveDialog(false)}>
+        <Dialog open={openApproveDialog} onClose={() => setOpenApproveDialog(false)} fullWidth maxWidth='sm' slotProps={{
+          paper: {
+            sx: {
+              p: 1,
+              borderRadius: '16px',
+              backdropFilter: 'blur(10px)',
+              backgroundColor: 'rgba(30, 30, 30, 0.7)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }
+          }
+        }}>
           <DialogTitle>Approve Application</DialogTitle>
           <DialogContent>
             <Typography gutterBottom>
-              Approve {selectedPersonnel?.personal_info.first_name}'s application?
+              Approve {selectedPersonnel?.personal_info.email}'s application?
             </Typography>
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Assign Service Area (Optional)</InputLabel>
@@ -280,7 +290,7 @@ const AdminDeliveryRequests = () => {
                 onChange={(e) => setSelectedArea(e.target.value)}
                 label="Assign Service Area (Optional)"
               >
-                {serviceAreas.map((area) => (
+                {serviceAreas?.areas?.map((area) => (
                   <MenuItem key={area.id} value={area.id}>
                     {area.name} ({area.city})
                   </MenuItem>
@@ -302,11 +312,22 @@ const AdminDeliveryRequests = () => {
         </Dialog>
 
         {/* Reject Dialog */}
-        <Dialog open={openRejectDialog} onClose={() => setOpenRejectDialog(false)}>
+        <Dialog open={openRejectDialog} onClose={() => setOpenRejectDialog(false)} fullWidth maxWidth='sm' slotProps={{
+          paper: {
+            sx: {
+              p: 1,
+              borderRadius: '16px',
+              backdropFilter: 'blur(10px)',
+              backgroundColor: 'rgba(30, 30, 30, 0.7)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }
+          }
+        }}>
           <DialogTitle>Reject Application</DialogTitle>
           <DialogContent>
             <Typography gutterBottom>
-              Reject {selectedPersonnel?.personal_info.first_name}'s application?
+              Reject {selectedPersonnel?.personal_info.email}'s application?
             </Typography>
             <TextField
               autoFocus
@@ -332,16 +353,24 @@ const AdminDeliveryRequests = () => {
         </Dialog>
 
         {/* Details Dialog */}
-        <Dialog open={openDetailsDialog} onClose={() => setOpenDetailsDialog(false)}>
+        <Dialog open={openDetailsDialog} onClose={() => setOpenDetailsDialog(false)} fullWidth maxWidth='sm' slotProps={{
+          paper: {
+            sx: {
+              p: 1,
+              borderRadius: '16px',
+              backdropFilter: 'blur(10px)',
+              backgroundColor: 'rgba(30, 30, 30, 0.7)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }
+          }
+        }}>
           <DialogTitle>Personnel Details</DialogTitle>
           <DialogContent>
             {detailsPersonnel && (
               <Box>
                 <Typography variant="body1">
-                  <strong>Name:</strong> {detailsPersonnel.personal_info.first_name} {detailsPersonnel.personal_info.last_name}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Email:</strong> {detailsPersonnel.email}
+                  <strong>Email:</strong> {detailsPersonnel.personal_info.email}
                 </Typography>
                 <Typography variant="body1">
                   <strong>Phone:</strong> {detailsPersonnel.phone_number}

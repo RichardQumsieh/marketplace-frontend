@@ -98,15 +98,17 @@ const AdminOrders = () => {
       width: 260,
       renderCell: (params) => (
         <Box>
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            sx={{ mr: 1 }}
-            onClick={() => updateStatus(params.row.id, "Delivered")}
-          >
-            Mark Delivered
-          </Button>
+          {(params.row.status !== 'Delivered') && (
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              sx={{ mr: 1 }}
+              onClick={() => updateStatus(params.row.id, "Delivered")}
+            >
+              Mark Delivered
+            </Button>
+          )}
           <Button
             size="small"
             variant="outlined"
