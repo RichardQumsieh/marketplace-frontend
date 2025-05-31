@@ -16,6 +16,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import axios from "axios";
 import formatExpiry from "./utils/formatExpiry";
 import OrderSuccessAnimation from "./components/OrderSuccessAnimation";
+import DeliveryLocationPicker from "./components/DeliveryLocationPicker";
 
 const styles = {
   container: {
@@ -84,8 +85,18 @@ const Checkout = () => {
     city: '',
     country: '',
     zipCode: '',
-    state: ''
+    state: '',
+    delivery_lat: null,
+    delivery_lng: null
   });
+  
+  const handleLocationChange = (location) => {
+    setTempShippingDetails(prev => ({
+      ...prev,
+      delivery_lat: location.delivery_lat,
+      delivery_lng: location.delivery_lng
+    }));
+  };
 
   const [tempPaymentDetails, setTempPaymentDetails] = useState({
     cardNumber: '',
@@ -136,13 +147,17 @@ const Checkout = () => {
         city: buyer.city,
         street: buyer.street,
         postal_code: buyer.postal_code,
-        state: buyer.state
+        state: buyer.state,
+        delivery_lat: tempShippingDetails.delivery_lat,
+        delivery_lng: tempShippingDetails.delivery_lng
       } : {
         country: tempShippingDetails.country,
         city: tempShippingDetails.city,
         street: tempShippingDetails.street,
         postal_code: tempShippingDetails.zipCode,
-        state: tempShippingDetails.state
+        state: tempShippingDetails.state,
+        delivery_lat: tempShippingDetails.delivery_lat,
+        delivery_lng: tempShippingDetails.delivery_lng
       };
 
       const paymentDetails = useSavedPayment ? {
@@ -326,7 +341,7 @@ const Checkout = () => {
                     />
                   }
                   label="Use saved shipping address"
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 1 }}
                 />
                 <Typography variant="subtitle1">
                   {buyer.country} - {buyer.city}, {buyer.street} {buyer.postal_code} {buyer.state}
@@ -396,6 +411,8 @@ const Checkout = () => {
                 </Grid2>
               </Grid2>
             )}
+            <Divider sx={{ my: 1 }} />
+            <DeliveryLocationPicker onLocationChange={handleLocationChange}/>
           </Box>
         );
       case 2:

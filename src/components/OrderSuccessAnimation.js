@@ -109,7 +109,10 @@ const OrderSuccessAnimation = ({ onClose, order_id }) => {
                 bgcolor: 'rgba(0,0,0,0.02)'
             }}>
                 <Typography variant="subtitle2">Order #{order_id}</Typography>
-                <Typography variant="body2">Estimated delivery: Jan 12</Typography>
+                <Typography variant="body2">Estimated delivery: {
+                    `${new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString()} ~ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}`
+                  }
+                </Typography>
             </Box>
           </Collapse>
 
